@@ -97,6 +97,7 @@ namespace PlaySharp
 
         public override void LoadFromNode(XmlNode Node)
         {
+            base.LoadFromNode(Node);
             _APIVersion = Util.GetNodeAttributeValue(Node, "apiVersion");
             _ServerVersion = Util.GetNodeAttributeValue(Node, "server");
         }

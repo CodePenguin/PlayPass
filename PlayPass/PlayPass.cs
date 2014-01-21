@@ -16,7 +16,11 @@ namespace PlayPass
         int ServerPort = PlayOnConstants.DefaultPort;
         string MediaStorageLocation = "";
         string MediaFileExt = "";
+        public bool QueueMode = true;
 
+        /// <summary>
+        /// Loads the PlayOn settings from the local computer's registry.
+        /// </summary>
         void LoadPlayOnSettings()
         {
             MediaStorageLocation = PlayOnSettings.GetMediaStorageLocation();
@@ -25,6 +29,10 @@ namespace PlayPass
             MediaFileExt = PlayOnSettings.GetPlayLaterVideoFormat();
         }
 
+        /// <summary>
+        /// Processes the config file by loading extra settings and then executing the ProcessPass procedure on each pass node.
+        /// </summary>
+        /// <param name="FileName"></param>
         public void ProcessConfigFile(string FileName)
         {
             LoadPlayOnSettings();
@@ -53,6 +61,10 @@ namespace PlayPass
             }
         }
 
+        /// <summary>
+        /// Executes the search and queue function on a pass node in the config file.
+        /// </summary>
+        /// <param name="PassNode">A pass node from the config file.</param>
         void ProcessPass(PlayOn PlayOn, XmlNode PassNode)
         {
             if (Util.GetNodeAttributeValue(PassNode, "enabled", "0") == "1")
@@ -74,8 +86,14 @@ namespace PlayPass
             }
         }
 
+        /// <summary>
+        /// Recursively walks through the items in Paths and attempts to find the next text item at the current position in the PlayOn tree.
+        /// </summary>
+        /// <param name="URL">A relative PlayOn URL indicating the current position in the PlayOn tree.</param>
+        /// <param name="Paths">A list of text items to scan through.</param>
         void ProcessPaths(PlayOn PlayOn, string URL, List<string> Paths)
         {
+            bool FoundItem = false;
             PlayOnItem Item = PlayOn.GetItem(URL);
             if (Paths.Count > 0)
             {
@@ -90,8 +108,11 @@ namespace PlayPass
                         {
                             WriteLog("    Found: " + ChildItem.Name);
                             ProcessPaths(PlayOn, ChildItem.URL, Paths);
+                            FoundItem = true;
                         }
                     }
+                    if (!FoundItem)
+                        WriteLog("    No item was found for the text \"" + MatchPattern + "\".");
                 }
             }
             else if (Item is PlayOnVideo)
@@ -100,10 +121,18 @@ namespace PlayPass
             {
                 foreach (PlayOnItem ChildItem in ((PlayOnFolder)Item).Items)
                     if (ChildItem is PlayOnVideo)
+                    {
                         QueueMedia((PlayOnVideo)ChildItem);
+                        FoundItem = true;
+                    }
+                if (!FoundItem)
+                    WriteLog("      No Video items were found at this level.");
             }
         }
 
+        /// <summary>
+        /// Checks the local file system to see if the item has already been recorded.  If not, it will queue the video for record in PlayLater.
+        /// </summary>
         void QueueMedia(PlayOnVideo Item)
         {
             bool Success = false;
@@ -114,7 +143,12 @@ namespace PlayPass
             Regex re = new Regex("[<>:\"/\\|?*]");
             FileName = re.Replace(FileName, "_");
             if (File.Exists(Path.Combine(MediaStorageLocation, FileName)))
-                Message = String.Format("Video already recorded to {0}", Path.Combine(MediaStorageLocation, FileName));
+                Message = String.Format("Video already recorded to {0}.", Path.Combine(MediaStorageLocation, FileName));
+            else if (!QueueMode)
+            {
+                Success = true;
+                Message = "Video will be queued on next run in Queue Mode.";
+            }
             else
             {
                 try
@@ -131,9 +165,12 @@ namespace PlayPass
                     Message = ex.Message.ToString();
                 }
             }
-            WriteLog("        QueueVideo Response: " + (Success ? "Successful" : "Failed") + " - " + Message);
+            WriteLog("        QueueVideo Response: " + (Success ? "Success" : "Failure") + " - " + Message);
         }
 
+        /// <summary>
+        /// Writes a log message to the console and to the debug area.
+        /// </summary>
         void WriteLog(string Message)
         {
             Console.WriteLine(Message);

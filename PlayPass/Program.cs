@@ -9,13 +9,23 @@ namespace PlayPass
         public static void Main(string[] args)
         {
             string ConfigFileName;
-            if (args.Length == 0)
-                ConfigFileName = Path.Combine(Directory.GetCurrentDirectory(), "PlayPass.config");
-            else if (args.Length > 1)
-                throw new Exception("Invalid command line arguments");
+            bool QueueMode = false;
+
+            Console.WriteLine("PlayPass Auto Queueing Engine\n");
+
+            if (args.Length == 1)
+                ConfigFileName = Path.Combine(Directory.GetCurrentDirectory(), "PlayPass.cfg");
+            else if (args.Length > 2)
+                throw new Exception("Invalid command line arguments.");
             else
-                ConfigFileName = args[0];
+            {
+                QueueMode = (args[0].ToLower() == "-queue");
+                ConfigFileName = args[1];
+            }
+            if (!File.Exists(ConfigFileName))
+                throw new Exception("Config file not found: " + ConfigFileName);
             PlayPass PlayPass = new PlayPass();
+            PlayPass.QueueMode = QueueMode;
             PlayPass.ProcessConfigFile(ConfigFileName);
         }
     }

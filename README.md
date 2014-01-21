@@ -3,7 +3,7 @@ PlayPass: Automated queuing engine for PlayLater
 
 What is it?
 --------------------------------
-[PlayLater](http://playon.tv) is essentially an internet DVR created by MediaMall Technologies, Inc.  I can't say enough about this great product.  It allows you to record many internet videos to your local machine so you can view them offline or keep them forever even if they are no longer available online. Unfortunately, the recording interface is a little bit manual at the moment so you can't automatically download all the newest episodes of your favorite show as they become available.  The original developers have indicated that they are working on a solution for a future update.
+[PlayLater](http://playon.tv) is essentially an internet DVR created by [MediaMall Technologies, Inc](http://playon.tv).  I can't say enough about this great product.  It allows you to record many internet videos to your local machine so you can view them offline or keep them forever even if they are no longer available online. Unfortunately, the recording interface is a little bit manual at the moment so you can't automatically download all the newest episodes of your favorite show as they become available.  The original developers have indicated that they are working on a solution for a future update.
 
 For those who want a solution right now there is PlayPass. PlayPass is an unofficial way of automatically queuing new content.  It uses the same technology that the PlayLater mobile apps use to queue the content so it does not require any modification of PlayLater.
 
@@ -13,7 +13,7 @@ Components
 A console program written in C# that will automatically queue items for download based on user preferences in an XML config file.
 
 ####PlaySharp
-A .NET 2.0 Assembly written in C# that handles all the communication between PlayPass and the PlayOn/PlayLater server.  It abstracts the PlayOn Server data protocols into easy to consume .NET native objects.
+A .NET 2.0 Assembly written in C# that handles all the communication between PlayPass and the PlayOn/PlayLater server.  It abstracts the PlayOn Server data protocols into easy to consume .NET native objects.  This could be used to create other kinds of interfaces.
 
 How to build it
 --------------------------------
