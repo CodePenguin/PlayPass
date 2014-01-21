@@ -21,6 +21,8 @@ Open the PlayPass.sln file in Visual Studios (Only Visual Studios 2013 has been 
 
 How to use it
 --------------------------------
+You can compile from source or grab the latest release files and start from there.
+
 Make a copy of the PlayPass.example.cfg and modify it to your liking.  The following is an example of a config file that will automatically queue up anything in your Hulu Queue.
 
 	<playpass>
@@ -43,6 +45,8 @@ To test what would be queued just execute PlayPass.exe with the filename of your
 When you are ready to run it in Queue Mode use the following:
 
     PlayPass.exe -queue MyConfig.cfg
+
+You can use Window's built in Task Scheduler program to execute PlayPass whenever you want.  I've got mine going off every day at midnight.  This way you are in control of when items are queued for downloading.
 
 License
 --------------------------------
