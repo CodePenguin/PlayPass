@@ -120,7 +120,7 @@ namespace PlaySharp
     {
         private bool LoadedDetails;
         private string _ArtURLLarge;
-        private DateTime _AirDate;
+        private string _AirDate;
         private string _Description;
         private string _MediaTitle;
         private string _MediaURL;
@@ -141,7 +141,7 @@ namespace PlaySharp
 
             if (Node.HasChildNodes) {
                 _ArtURLLarge = Util.GetChildNodeAttributeValue(Node, "media", "art");
-                _AirDate = DateTime.Parse(Util.GetChildNodeAttributeValue(Node, "date", "name"));
+                _AirDate = Util.GetChildNodeAttributeValue(Node, "date", "name");
                 _Description = Util.GetChildNodeAttributeValue(Node, "description","name");
                 _MediaTitle = Util.GetChildNodeAttributeValue(Node, "media_title", "name");
                 _MediaURL = Util.GetChildNodeAttributeValue(Node, "media", "src");
@@ -168,7 +168,7 @@ namespace PlaySharp
         /// <summary>
         /// The date string representing the date this video item originally aired.
         /// </summary>
-        public DateTime AirDate { get { LoadDetails(); return _AirDate; } }
+        public string AirDate { get { LoadDetails(); return _AirDate; } }
 
         /// <summary>
         /// The full description for this video item.
