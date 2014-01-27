@@ -165,7 +165,7 @@ namespace PlayPass
                     Message = ex.Message.ToString();
                 }
             }
-            WriteLog("        QueueVideo Response: " + (Success ? "Success" : "Failure") + " - " + Message);
+            WriteLog("        QueueVideo Response: " + (Success ? "Success" : "Failure") + (Message == "" ? "" : " - " + Message));
         }
 
         /// <summary>
