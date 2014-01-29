@@ -16,7 +16,8 @@ namespace PlayPass
         int ServerPort = PlayOnConstants.DefaultPort;
         string MediaStorageLocation = "";
         string MediaFileExt = "";
-        public bool QueueMode = true;
+        public bool QueueMode = false;
+        public bool VerboseMode = false;
 
         /// <summary>
         /// Loads the PlayOn settings from the local computer's registry.
@@ -67,66 +68,66 @@ namespace PlayPass
         /// <param name="PassNode">A pass node from the config file.</param>
         void ProcessPass(PlayOn PlayOn, XmlNode PassNode)
         {
+            PlayOnItem CurrItem = PlayOn.GetCatalog();
             if (Util.GetNodeAttributeValue(PassNode, "enabled", "0") == "1")
             {
-                WriteLog(String.Format("Processing {0}...", Util.GetNodeAttributeValue(PassNode, "description")));
+                WriteLog("Processing {0}...", Util.GetNodeAttributeValue(PassNode, "description"));
                 try
                 {
                     List<string> Paths = new List<string>();
-                    foreach (XmlNode ScanNode in PassNode.SelectNodes("scan"))
-                        if (ScanNode.Attributes["name"] != null)
-                            Paths.Add(ScanNode.Attributes["name"].Value);
-                    if (Paths.Count > 0)
-                        ProcessPaths(PlayOn, PlayOnConstants.DefaultURL, Paths);
+                    foreach (XmlNode Node in PassNode.ChildNodes)
+                    {
+                        string MatchPattern = Util.GetNodeAttributeValue(Node, "name");
+                        bool FoundItem = false;
+                        if (!(CurrItem is PlayOnFolder))
+                            continue;
+                        if (Node.Name == "scan")
+                        {
+                            WriteLog("  Looking for a folder with text matching \"{0}\"...", MatchPattern);
+                            foreach (PlayOnItem ChildItem in ((PlayOnFolder)CurrItem).Items)
+                            {
+                                if (ChildItem is PlayOnFolder)
+                                {
+                                    if (VerboseMode)
+                                        WriteLog("    Checking pattern against \"{0}\"...", ChildItem.Name);
+                                    if (Util.MatchesPattern(ChildItem.Name, MatchPattern))
+                                    {
+                                        WriteLog("    Found: " + ChildItem.Name);
+                                        FoundItem = true;
+                                        CurrItem = ChildItem;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (!FoundItem)
+                                WriteLog("    No folders were found text matching \"{0}\".", MatchPattern);
+                        }
+                        else if (Node.Name == "queue")
+                        {
+                            WriteLog("  Looking for videos with text matching \"{0}\"...", MatchPattern);
+                            foreach (PlayOnItem ChildItem in ((PlayOnFolder)CurrItem).Items)
+                            {
+                                if (ChildItem is PlayOnVideo)
+                                {
+                                    if (VerboseMode)
+                                        WriteLog("    Checking pattern against \"{0}\"...", ChildItem.Name);
+                                    if (Util.MatchesPattern(ChildItem.Name, MatchPattern))
+                                    {
+                                        WriteLog("    Found: {0}", ChildItem.Name);
+                                        QueueMedia((PlayOnVideo)ChildItem);
+                                        FoundItem = true;
+                                    }
+                                }
+                            }
+                            if (!FoundItem)
+                                WriteLog("    No videos were found that matched this criteria.");
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
                     WriteLog("Error processing pass: " + ex.Message.ToString());
                 }
-            }
-        }
-
-        /// <summary>
-        /// Recursively walks through the items in Paths and attempts to find the next text item at the current position in the PlayOn tree.
-        /// </summary>
-        /// <param name="URL">A relative PlayOn URL indicating the current position in the PlayOn tree.</param>
-        /// <param name="Paths">A list of text items to scan through.</param>
-        void ProcessPaths(PlayOn PlayOn, string URL, List<string> Paths)
-        {
-            bool FoundItem = false;
-            PlayOnItem Item = PlayOn.GetItem(URL);
-            if (Paths.Count > 0)
-            {
-                string MatchPattern = Paths[0];
-                Paths.RemoveAt(0);
-                if (Item is PlayOnFolder)
-                {
-                    WriteLog("  Looking for: " + MatchPattern);
-                    foreach (PlayOnItem ChildItem in ((PlayOnFolder)Item).Items)
-                    {
-                        if ((ChildItem is PlayOnFolder || ChildItem is PlayOnVideo) && ChildItem.Name == MatchPattern)
-                        {
-                            WriteLog("    Found: " + ChildItem.Name);
-                            ProcessPaths(PlayOn, ChildItem.URL, Paths);
-                            FoundItem = true;
-                        }
-                    }
-                    if (!FoundItem)
-                        WriteLog("    No item was found for the text \"" + MatchPattern + "\".");
-                }
-            }
-            else if (Item is PlayOnVideo)
-                QueueMedia((PlayOnVideo)Item);
-            else if (Item is PlayOnFolder)
-            {
-                foreach (PlayOnItem ChildItem in ((PlayOnFolder)Item).Items)
-                    if (ChildItem is PlayOnVideo)
-                    {
-                        QueueMedia((PlayOnVideo)ChildItem);
-                        FoundItem = true;
-                    }
-                if (!FoundItem)
-                    WriteLog("      No Video items were found at this level.");
             }
         }
 
@@ -141,7 +142,7 @@ namespace PlayPass
             WriteLog("      Adding Video to Queue: " + Item.Name);
             string FileName = String.Format("{0} - {1}{2}", Item.Series, Item.MediaTitle, MediaFileExt);
             Regex re = new Regex("[<>:\"/\\|?*]");
-            FileName = re.Replace(FileName, "_");
+            FileName = re.Replace(FileName, "_").TrimStart(' ','-');
             if (File.Exists(Path.Combine(MediaStorageLocation, FileName)))
                 Message = String.Format("Video already recorded to {0}.", Path.Combine(MediaStorageLocation, FileName));
             else if (!QueueMode)
@@ -165,7 +166,7 @@ namespace PlayPass
                     Message = ex.Message.ToString();
                 }
             }
-            WriteLog("        QueueVideo Response: " + (Success ? "Success" : "Failure") + (Message == "" ? "" : " - " + Message));
+            WriteLog("        QueueVideo Response: {0}{1}",(Success ? "Success" : "Skipped"), (Message == "" ? "" : " - " + Message));
         }
 
         /// <summary>
@@ -173,6 +174,16 @@ namespace PlayPass
         /// </summary>
         void WriteLog(string Message)
         {
+            Console.WriteLine(Message);
+            Debug.WriteLine(Message);
+        }
+
+        /// <summary>
+        /// Writes a log message to the console and to the debug area.
+        /// </summary>
+        void WriteLog(string Message, params object[] args)
+        {
+            Message = String.Format(Message, args);
             Console.WriteLine(Message);
             Debug.WriteLine(Message);
         }

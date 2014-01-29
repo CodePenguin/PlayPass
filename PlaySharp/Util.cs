@@ -1,4 +1,5 @@
 ﻿using System.Xml;
+using System.Text.RegularExpressions;
 
 namespace PlaySharp
 {
@@ -60,6 +61,15 @@ namespace PlaySharp
         public static string GetChildNodeAttributeValue(XmlNode ParentNode, string ChildName, string AttributeName)
         {
             return GetChildNodeAttributeValue(ParentNode, ChildName, AttributeName, "");
+        }
+
+        /// <summary>
+        /// Returns true if the string Value matches the string Pattern using * to match multiple characters and ? to match a single character.
+        /// </summary>
+        /// <returns></returns>
+        public static bool MatchesPattern(string Value, string Pattern)
+        {
+            return new Regex("^" + Regex.Escape(Pattern).Replace(@"\*", ".*").Replace(@"\?",".") + "$").IsMatch(Value);
         }
     }
 

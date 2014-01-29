@@ -63,7 +63,7 @@ namespace PlaySharp
         /// <summary>
         /// Returns the root PlayOnCatalog item.
         /// </summary>
-        PlayOnCatalog GetCatalog()
+        public PlayOnCatalog GetCatalog()
         {
             return (PlayOnCatalog)GetItem(PlayOnConstants.DefaultURL);
         }

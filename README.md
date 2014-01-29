@@ -32,11 +32,14 @@ Make a copy of the PlayPass.example.cfg and modify it to your liking.  The follo
 				<scan name="Hulu" />
 				<scan name="Your Queue" />
 				<scan name="Sort By Date" />
+				<queue name="*" />
 			</pass>
 		</passes>
 	</playpass>
 
-You can add as many "passes" nodes as you'd like.  You can even disable one by changing the "enabled" property to "0".
+You can add as many "passes" nodes as you'd like.  You can even disable one by changing the "enabled" property to "0".  `scan` nodes will progress through the PlayOn items looking for an item that matches the supplied name.  The `name` can use * as a wildcard to match zero to many characters or ? to match one character.
+
+You can add as many `queue` nodes as you'd like which will queue any videos in the current position in the PlayOn items that matches the included pattern.  The `name` argument can also use wildcards like the `scan` nodes.
 
 To test what would be queued just execute PlayPass.exe with the filename of your config file:
 
@@ -45,6 +48,12 @@ To test what would be queued just execute PlayPass.exe with the filename of your
 When you are ready to run it in Queue Mode use the following:
 
     PlayPass.exe -queue MyConfig.cfg
+
+For debugging you can run it in Verbose Mode using the following:
+
+    PlayPass.exe -verbose MyConfig.cfg
+
+Verbose mode prints out a lot more information to help you see what text you need to match up to in order to queue the desired items.
 
 You can use Window's built in Task Scheduler program to execute PlayPass whenever you want.  I've got mine going off every day at midnight.  This way you are in control of when items are queued for downloading.
 
