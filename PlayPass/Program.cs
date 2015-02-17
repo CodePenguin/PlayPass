@@ -13,7 +13,7 @@ namespace PlayPass
 
             try
             {
-                Console.WriteLine("PlayPass Auto Queueing Engine\n");
+                Console.WriteLine("PlayPass Auto Queueing Engine Version {0}\n", PlayPass.Version);
                 ConfigFileName = Path.Combine(Directory.GetCurrentDirectory(), "PlayPass.cfg");
                 if (args.Length == 1)
                 {

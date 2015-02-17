@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -48,11 +49,12 @@ namespace PlayPass
                     ServerPort = int.Parse(PlaySharp.Util.GetNodeAttributeValue(SettingsNode, "port", ServerPort.ToString()));
                 }
 
+				WriteVerboseLog("Connecting to {0}:{1}...", ServerHost, ServerPort);
                 PlayOn PlayOn = new PlayOn(ServerHost, ServerPort);
 
                 XmlNode PassesNode = Config.SelectSingleNode("playpass/passes");
                 if (PassesNode == null)
-                    throw new Exception("A passes node was found in the config file");
+                    throw new Exception("A passes node was not found in the config file");
                 foreach (XmlNode PassNode in PassesNode.SelectNodes("pass"))
                     ProcessPass(PlayOn, PassNode);
             }
@@ -69,9 +71,11 @@ namespace PlayPass
         void ProcessPass(PlayOn PlayOn, XmlNode PassNode)
         {
             PlayOnItem CurrItem = PlayOn.GetCatalog();
-            if (Util.GetNodeAttributeValue(PassNode, "enabled", "0") == "1")
+            if (Util.GetNodeAttributeValue(PassNode, "enabled", "0") == "0")
+				WriteLog("Skipping \"{0}\".", Util.GetNodeAttributeValue(PassNode, "description"));
+			else
             {
-                WriteLog("Processing {0}...", Util.GetNodeAttributeValue(PassNode, "description"));
+                WriteLog("Processing \"{0}\"...", Util.GetNodeAttributeValue(PassNode, "description"));
                 try
                 {
                     List<string> Paths = new List<string>();
@@ -88,8 +92,7 @@ namespace PlayPass
                             {
                                 if (ChildItem is PlayOnFolder)
                                 {
-                                    if (VerboseMode)
-                                        WriteLog("    Checking pattern against \"{0}\"...", ChildItem.Name);
+                                    WriteVerboseLog("    Checking pattern against \"{0}\"...", ChildItem.Name);
                                     if (Util.MatchesPattern(ChildItem.Name, MatchPattern))
                                     {
                                         WriteLog("    Found: " + ChildItem.Name);
@@ -109,8 +112,7 @@ namespace PlayPass
                             {
                                 if (ChildItem is PlayOnVideo)
                                 {
-                                    if (VerboseMode)
-                                        WriteLog("    Checking pattern against \"{0}\"...", ChildItem.Name);
+                                    WriteVerboseLog("    Checking pattern against \"{0}\"...", ChildItem.Name);
                                     if (Util.MatchesPattern(ChildItem.Name, MatchPattern))
                                     {
                                         WriteLog("    Found: {0}", ChildItem.Name);
@@ -168,6 +170,19 @@ namespace PlayPass
             }
             WriteLog("        QueueVideo Response: {0}{1}",(Success ? "Success" : "Skipped"), (Message == "" ? "" : " - " + Message));
         }
+		
+		/// <summary>
+        /// The PlayPass version number
+        /// </summary>
+        public string Version
+        {
+			get
+			{
+				Assembly assembly = Assembly.GetExecutingAssembly();
+				FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+				return fileVersionInfo.ProductVersion;
+			}
+        }
 
         /// <summary>
         /// Writes a log message to the console and to the debug area.
@@ -183,6 +198,18 @@ namespace PlayPass
         /// </summary>
         void WriteLog(string Message, params object[] args)
         {
+            Message = String.Format(Message, args);
+            Console.WriteLine(Message);
+            Debug.WriteLine(Message);
+        }
+		
+/// <summary>
+        /// Writes a log message to the console and to the debug area.
+        /// </summary>
+        void WriteVerboseLog(string Message, params object[] args)
+        {
+			if (!VerboseMode)
+				return;
             Message = String.Format(Message, args);
             Console.WriteLine(Message);
             Debug.WriteLine(Message);
