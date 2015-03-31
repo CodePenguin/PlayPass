@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
 using PlaySharp;
 
@@ -15,60 +11,43 @@ namespace PlayPass
     {
         string ServerHost = PlayOnConstants.DefaultHost;
         int ServerPort = PlayOnConstants.DefaultPort;
-        string MediaStorageLocation = "";
-        string MediaFileExt = "";
         public bool QueueMode = false;
+        public bool SkipMode = false;
         public bool VerboseMode = false;
-
-        /// <summary>
-        /// Loads the PlayOn settings from the local computer's registry.
-        /// </summary>
-        void LoadPlayOnSettings()
-        {
-            MediaStorageLocation = PlayOnSettings.GetMediaStorageLocation();
-            if (MediaStorageLocation == "")
-                throw new Exception("Unable to find PlayLater's Media Storage Location");
-            MediaFileExt = PlayOnSettings.GetPlayLaterVideoFormat();
-        }
 
         /// <summary>
         /// Processes the config file by loading extra settings and then executing the ProcessPass procedure on each pass node.
         /// </summary>
-        /// <param name="FileName"></param>
         public void ProcessConfigFile(string FileName)
         {
-            LoadPlayOnSettings();
-            try
+            XmlDocument Config = new XmlDocument();
+            Config.Load(FileName);
+            XmlNode SettingsNode = Config.SelectSingleNode("playpass/settings");
+            string QueueListConnectionString = "";
+            if (SettingsNode != null)
             {
-                XmlDocument Config = new XmlDocument();
-                Config.Load(FileName);
-                XmlNode SettingsNode = Config.SelectSingleNode("playpass/settings");
-                if (SettingsNode != null)
-                {
-                    ServerHost = PlaySharp.Util.GetNodeAttributeValue(SettingsNode, "server", ServerHost);
-                    ServerPort = int.Parse(PlaySharp.Util.GetNodeAttributeValue(SettingsNode, "port", ServerPort.ToString()));
-                }
-
-				WriteVerboseLog("Connecting to {0}:{1}...", ServerHost, ServerPort);
-                PlayOn PlayOn = new PlayOn(ServerHost, ServerPort);
-
-                XmlNode PassesNode = Config.SelectSingleNode("playpass/passes");
-                if (PassesNode == null)
-                    throw new Exception("A passes node was not found in the config file");
-                foreach (XmlNode PassNode in PassesNode.SelectNodes("pass"))
-                    ProcessPass(PlayOn, PassNode);
+                ServerHost = PlaySharp.Util.GetNodeAttributeValue(SettingsNode, "server", ServerHost);
+                ServerPort = int.Parse(PlaySharp.Util.GetNodeAttributeValue(SettingsNode, "port", ServerPort.ToString()));
+                QueueListConnectionString = PlaySharp.Util.GetNodeAttributeValue(SettingsNode, "queuelist", "");
             }
-            catch (Exception ex)
-            {
-                WriteLog("Error processing config file: " + ex.Message.ToString());
-            }
+
+            QueueList QueueList = new QueueList(QueueListConnectionString);
+
+			WriteVerboseLog("Connecting to {0}:{1}...", ServerHost, ServerPort);
+            PlayOn PlayOn = new PlayOn(ServerHost, ServerPort);
+
+            XmlNode PassesNode = Config.SelectSingleNode("playpass/passes");
+            if (PassesNode == null)
+                throw new ApplicationException("A passes node was not found in the config file");
+            foreach (XmlNode PassNode in PassesNode.SelectNodes("pass"))
+                ProcessPass(PlayOn, QueueList, PassNode);
         }
 
         /// <summary>
         /// Executes the search and queue function on a pass node in the config file.
         /// </summary>
         /// <param name="PassNode">A pass node from the config file.</param>
-        void ProcessPass(PlayOn PlayOn, XmlNode PassNode)
+        void ProcessPass(PlayOn PlayOn, QueueList QueueList, XmlNode PassNode)
         {
             PlayOnItem CurrItem = PlayOn.GetCatalog();
             if (Util.GetNodeAttributeValue(PassNode, "enabled", "0") == "0")
@@ -78,7 +57,6 @@ namespace PlayPass
                 WriteLog("Processing \"{0}\"...", Util.GetNodeAttributeValue(PassNode, "description"));
                 try
                 {
-                    List<string> Paths = new List<string>();
                     foreach (XmlNode Node in PassNode.ChildNodes)
                     {
                         string MatchPattern = Util.GetNodeAttributeValue(Node, "name");
@@ -87,15 +65,15 @@ namespace PlayPass
                             continue;
                         if (Node.Name == "scan")
                         {
-                            WriteLog("  Looking for a folder with text matching \"{0}\"...", MatchPattern);
+                            WriteLog("  Matching \"{0}\"...", MatchPattern);
                             foreach (PlayOnItem ChildItem in ((PlayOnFolder)CurrItem).Items)
                             {
                                 if (ChildItem is PlayOnFolder)
                                 {
-                                    WriteVerboseLog("    Checking pattern against \"{0}\"...", ChildItem.Name);
+                                    WriteVerboseLog("    Checking \"{0}\"...", ChildItem.Name);
                                     if (Util.MatchesPattern(ChildItem.Name, MatchPattern))
                                     {
-                                        WriteLog("    Found: " + ChildItem.Name);
+                                        WriteLog("    Scanning \"{0}\"", ChildItem.Name);
                                         FoundItem = true;
                                         CurrItem = ChildItem;
                                         break;
@@ -103,26 +81,26 @@ namespace PlayPass
                                 }
                             }
                             if (!FoundItem)
-                                WriteLog("    No folders were found text matching \"{0}\".", MatchPattern);
+                                WriteLog("    No matches \"{0}\".", MatchPattern);
                         }
                         else if (Node.Name == "queue")
                         {
-                            WriteLog("  Looking for videos with text matching \"{0}\"...", MatchPattern);
+                            WriteLog("  Matching \"{0}\"...", MatchPattern);
                             foreach (PlayOnItem ChildItem in ((PlayOnFolder)CurrItem).Items)
                             {
                                 if (ChildItem is PlayOnVideo)
                                 {
-                                    WriteVerboseLog("    Checking pattern against \"{0}\"...", ChildItem.Name);
+                                    WriteVerboseLog("    Checking \"{0}\"...", ChildItem.Name);
                                     if (Util.MatchesPattern(ChildItem.Name, MatchPattern))
                                     {
-                                        WriteLog("    Found: {0}", ChildItem.Name);
-                                        QueueMedia((PlayOnVideo)ChildItem);
+                                        WriteLog("    Queuing \"{0}\"", ChildItem.Name);
+                                        QueueMedia(QueueList, (PlayOnVideo)ChildItem);
                                         FoundItem = true;
                                     }
                                 }
                             }
                             if (!FoundItem)
-                                WriteLog("    No videos were found that matched this criteria.");
+                                WriteLog("    No matches \"{0}\".", MatchPattern);
                         }
                     }
                 }
@@ -134,19 +112,20 @@ namespace PlayPass
         }
 
         /// <summary>
-        /// Checks the local file system to see if the item has already been recorded.  If not, it will queue the video for record in PlayLater.
+        /// Checks the queue list to see if the item has already been recorded.  If not, it will queue the video for record in PlayLater.
         /// </summary>
-        void QueueMedia(PlayOnVideo Item)
+        void QueueMedia(QueueList QueueList, PlayOnVideo Item)
         {
             bool Success = false;
             string Message = "";
-
-            WriteLog("      Adding Video to Queue: " + Item.Name);
-            string FileName = String.Format("{0} - {1}{2}", Item.Series, Item.MediaTitle, MediaFileExt);
-            Regex re = new Regex("[<>:\"/\\|?*]");
-            FileName = re.Replace(FileName, "_").TrimStart(' ','-');
-            if (File.Exists(Path.Combine(MediaStorageLocation, FileName)))
-                Message = String.Format("Video already recorded to {0}.", Path.Combine(MediaStorageLocation, FileName));
+            if (QueueList.MediaInList(Item))
+                Message = "Already recorded or skipped.";
+            else if (SkipMode)
+            {
+                Success = false;
+                Message = "Manually skipped.";
+                QueueList.AddMediaToList(Item);
+            }
             else if (!QueueMode)
             {
                 Success = true;
@@ -160,15 +139,17 @@ namespace PlayPass
                     if (QueueResult == QueueVideoResult.PlayLaterNotFound)
                         Message = "PlayLater queue link not found. PlayLater may not be running.";
                     else if (QueueResult == QueueVideoResult.AlreadyInQueue)
-                        Message = "The requested media item is already in the queue.";
+                        Message = "Already queued.";
                     Success = (QueueResult == QueueVideoResult.Success);
+                    if (Success)
+                        QueueList.AddMediaToList(Item);
                 }
                 catch (Exception ex)
                 {
                     Message = ex.Message.ToString();
                 }
             }
-            WriteLog("        QueueVideo Response: {0}{1}",(Success ? "Success" : "Skipped"), (Message == "" ? "" : " - " + Message));
+            WriteLog("      {0}{1}", (Success ? "Queued" : "Skipped"), (Message == "" ? "" : ": " + Message));
         }
 		
 		/// <summary>
@@ -202,8 +183,8 @@ namespace PlayPass
             Console.WriteLine(Message);
             Debug.WriteLine(Message);
         }
-		
-/// <summary>
+
+        /// <summary>
         /// Writes a log message to the console and to the debug area.
         /// </summary>
         void WriteVerboseLog(string Message, params object[] args)

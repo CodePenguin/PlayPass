@@ -126,7 +126,7 @@ namespace PlaySharp
         private string _MediaURL;
         private string _PlayLaterName;
         private string _PlayLaterURL;
-        private string _RunTime;
+        private TimeSpan _RunTime;
         private string _Series;
 
         public PlayOnVideo(PlayOn API)
@@ -147,7 +147,7 @@ namespace PlaySharp
                 _MediaURL = Util.GetChildNodeAttributeValue(Node, "media", "src");
                 _PlayLaterName = Util.GetChildNodeAttributeValue(Node, "media_playlater", "name");
                 _PlayLaterURL = Util.GetChildNodeAttributeValue(Node, "media_playlater", "src");
-                _RunTime = Util.GetChildNodeAttributeValue(Node, "time", "name");
+                _RunTime = TimeSpan.Parse(Util.GetChildNodeAttributeValue(Node, "time", "name"));
                 _Series = Util.GetChildNodeAttributeValue(Node, "series", "name");
             }
         }
@@ -198,7 +198,7 @@ namespace PlaySharp
         /// <summary>
         /// The runtime of this video item.
         /// </summary>
-        public string RunTime { get { LoadDetails(); return _RunTime; } }
+        public TimeSpan RunTime { get { LoadDetails(); return _RunTime; } }
 
         /// <summary>
         /// The series name associated with this video item.

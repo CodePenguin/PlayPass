@@ -69,7 +69,7 @@ namespace PlaySharp
         /// <returns></returns>
         public static bool MatchesPattern(string Value, string Pattern)
         {
-            return new Regex("^" + Regex.Escape(Pattern).Replace(@"\*", ".*").Replace(@"\?",".") + "$").IsMatch(Value);
+            return new Regex("(?i)^" + Regex.Escape(Pattern).Replace(@"\*", ".*").Replace(@"\?",".") + "$").IsMatch(Value);
         }
     }
 

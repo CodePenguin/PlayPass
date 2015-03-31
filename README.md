@@ -41,6 +41,7 @@ You can add as many "passes" nodes as you'd like.  You can even disable one by c
 
 You can add as many `queue` nodes as you'd like which will queue any videos in the current position in the PlayOn items that matches the included pattern.  The `name` argument can also use wildcards like the `scan` nodes.
 
+####Queue Mode
 To test what would be queued just execute PlayPass.exe with the filename of your config file:
 
     PlayPass.exe MyConfig.cfg
@@ -49,13 +50,27 @@ When you are ready to run it in Queue Mode use the following:
 
     PlayPass.exe -queue MyConfig.cfg
 
+When videos are queued a special `filename.playpass.skip` file is created for each video.  This makes it to files are not continually queued when you've already recorded it.  This allows you to move the final recorded file somewhere else.  By default, skip files are stored in the PlayLater media location specified in the PlayLater settings.
+
+If you need to re-queue a file, just delete the corresponding skip file and re-run PlayPass.
+
+####Verbose Mode
 For debugging you can run it in Verbose Mode using the following:
 
     PlayPass.exe -verbose MyConfig.cfg
 
-Verbose mode prints out a lot more information to help you see what text you need to match up to in order to queue the desired items.
+Verbose Mode prints out a lot more information to help you see what text you need to match up to in order to queue the desired items.
 
+####Skip Mode
+For automatically skipping everything found on this run, you can run in Skip Mode using the following:
+
+    PlayPass.exe -skip MyConfig.cfg
+
+Skip Mode creates a special filename.playpass.skip file for each file that would be queued.
+
+####Scheduling
 You can use Window's built in Task Scheduler program to execute PlayPass whenever you want.  I've got mine going off every day at midnight.  This way you are in control of when items are queued for downloading.
+
 
 License
 --------------------------------
