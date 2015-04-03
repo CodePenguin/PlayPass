@@ -1,4 +1,4 @@
-﻿namespace PlayPass
+﻿namespace PlayPassEngine
 {
     public interface ILogger
     {

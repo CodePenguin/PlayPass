@@ -1,18 +1,18 @@
 ﻿using System;
 using PlaySharp;
 
-namespace PlayPass
+namespace PlayPassEngine
 {
-    internal class PlayPass
+    public class PlayPassProcessor
     {
-        private readonly LogManager _logManager;
+        private readonly ILogManager _logManager;
         private readonly PlayOn _playOn;
         private readonly IQueueList _queueList;
 
         public bool QueueMode;
         public bool SkipMode;
 
-        public PlayPass(PlayOn playOn, LogManager logManager, IQueueList queueList)
+        public PlayPassProcessor(PlayOn playOn, ILogManager logManager, IQueueList queueList)
         {
             _playOn = playOn;
             _logManager = logManager;

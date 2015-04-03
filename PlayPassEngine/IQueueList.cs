@@ -1,9 +1,9 @@
 ﻿using System;
 using PlaySharp;
 
-namespace PlayPass
+namespace PlayPassEngine
 {
-    interface IQueueList
+    public interface IQueueList
     {
         /// <summary>
         ///     Initializes the Queue List with custom settings

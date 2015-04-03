@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace PlayPass
+namespace PlayPassEngine
 {
-    class PassItem
+    public class PassItem
     {
         public PassActions Actions { get; set; }
         public string Description { get; set; }
@@ -16,7 +16,7 @@ namespace PlayPass
         }
     }
 
-    class PassItems : List<PassItem>
+    public class PassItems : List<PassItem>
     {
         
     }

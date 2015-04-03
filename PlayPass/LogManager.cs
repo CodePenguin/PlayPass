@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using PlayPassEngine;
 
 namespace PlayPass
 {
-    internal class LogManager
+    internal class LogManager : ILogManager
     {
         private readonly List<ILogger> _loggers = new List<ILogger>();
 
-        public List<ILogger> Loggers
+        public IList<ILogger> Loggers
         {
             get { return _loggers; }
         }

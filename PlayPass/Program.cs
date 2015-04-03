@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Reflection;
+using PlayPassEngine;
 using PlaySharp;
 
 namespace PlayPass
@@ -30,7 +31,7 @@ namespace PlayPass
                 logManager.LogVerbose("Connecting to {0}:{1}...", config.ServerHost, config.ServerPort);
                 var playOn = new PlayOn(config.ServerHost, config.ServerPort);
 
-                var playPass = new PlayPass(playOn, logManager, queueList)
+                var playPass = new PlayPassProcessor(playOn, logManager, queueList)
                 {
                     QueueMode = commandline.QueueMode,
                     SkipMode = commandline.SkipMode
