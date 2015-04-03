@@ -18,7 +18,8 @@ namespace PlayPass
 
         public void LogVerbose(string msg)
         {
-            Console.WriteLine(msg);
+            if (VerboseMode)
+                Console.WriteLine(msg);
         }
     }
 }

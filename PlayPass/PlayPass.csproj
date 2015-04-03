@@ -38,13 +38,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandLineParser.cs" />
+    <Compile Include="ConfigReader.cs" />
     <Compile Include="ConsoleLogger.cs" />
     <Compile Include="ILogger.cs" />
+    <Compile Include="IQueueList.cs" />
     <Compile Include="LogManager.cs" />
+    <Compile Include="MemoryQueueList.cs" />
+    <Compile Include="PassAction.cs" />
+    <Compile Include="PassItem.cs" />
     <Compile Include="PlayPass.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QueueList.cs" />
+    <Compile Include="FileQueueList.cs" />
+    <Compile Include="QueueListFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PlaySharp\PlaySharp.csproj">

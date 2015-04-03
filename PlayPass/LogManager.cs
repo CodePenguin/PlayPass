@@ -6,7 +6,6 @@ namespace PlayPass
     internal class LogManager
     {
         private readonly List<ILogger> _loggers = new List<ILogger>();
-        public bool Verbose { get; set; }
 
         public List<ILogger> Loggers
         {
@@ -35,8 +34,6 @@ namespace PlayPass
         /// </summary>
         public void LogVerbose(string message)
         {
-            if (!Verbose)
-                return;
             foreach (var logger in _loggers)
                 logger.LogVerbose(message);
         }
@@ -46,8 +43,6 @@ namespace PlayPass
         /// </summary>
         public void LogVerbose(string message, params object[] args)
         {
-            if (!Verbose)
-                return;
             message = String.Format(message, args);
             foreach (var logger in _loggers)
                 logger.LogVerbose(message);

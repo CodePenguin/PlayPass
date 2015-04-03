@@ -9,27 +9,32 @@ namespace PlayPass
     /// <summary>
     ///     A class that keeps track of previously queued media so it is not continually downloaded.
     /// </summary>
-    internal class QueueList
+    class FileQueueList : IQueueList
     {
-        protected String SkipFilePath;
+        private string _skipFilePath;
+
+        public static void RegisterClass()
+        {
+            QueueListFactory.RegisterClass("FILE", typeof(FileQueueList));
+        }
 
         /// <summary>
-        ///     Initializes the QueueList
+        ///     Initializes the Queue List with custom settings
         /// </summary>
-        public QueueList(String connectionString)
+        public void Initialize(string connectionString)
         {
-            var parser = new DbConnectionStringBuilder() {ConnectionString = connectionString};
+            var parser = new DbConnectionStringBuilder() { ConnectionString = connectionString };
             if (parser.ContainsKey("Data Source"))
-                SkipFilePath = parser["Data Source"].ToString();
+                _skipFilePath = parser["Data Source"].ToString();
             else
             {
                 var mediaStorageLocation = PlayOnSettings.GetMediaStorageLocation();
                 if (mediaStorageLocation == "")
                     throw new Exception("Unable to find PlayLater's Media Storage Location");
-                SkipFilePath = mediaStorageLocation;
+                _skipFilePath = mediaStorageLocation;
             }
-            if (!Directory.Exists(SkipFilePath))
-                throw new Exception(String.Format("Queue List data path does not exists: {0}", SkipFilePath));
+            if (!Directory.Exists(_skipFilePath))
+                throw new Exception(String.Format("Queue List data path does not exists: {0}", _skipFilePath));            
         }
 
         /// <summary>
@@ -50,7 +55,7 @@ namespace PlayPass
             var temp = String.Format("{0} - {1}.playpass.skip", media.Series, media.MediaTitle);
             var re = new Regex("[<>:\"/\\|?*]");
             temp = re.Replace(temp, "_").TrimStart(' ', '-');
-            return Path.Combine(SkipFilePath, temp);
+            return Path.Combine(_skipFilePath, temp);
         }
 
         /// <summary>
