@@ -7,56 +7,58 @@ using PlaySharp;
 namespace PlayPass
 {
     /// <summary>
-    /// A class that keeps track of previously queued media so it is not continually downloaded.
+    ///     A class that keeps track of previously queued media so it is not continually downloaded.
     /// </summary>
-    class QueueList
+    internal class QueueList
     {
-        protected String _SkipFilePath;
+        protected String SkipFilePath;
 
-        public QueueList(String ConnectionString)
+        /// <summary>
+        ///     Initializes the QueueList
+        /// </summary>
+        public QueueList(String connectionString)
         {
-            DbConnectionStringBuilder parser = new DbConnectionStringBuilder();
-            parser.ConnectionString = ConnectionString;
+            var parser = new DbConnectionStringBuilder() {ConnectionString = connectionString};
             if (parser.ContainsKey("Data Source"))
-                _SkipFilePath = parser["Data Source"].ToString();
+                SkipFilePath = parser["Data Source"].ToString();
             else
             {
-                string MediaStorageLocation = PlayOnSettings.GetMediaStorageLocation();
-                if (MediaStorageLocation == "")
+                var mediaStorageLocation = PlayOnSettings.GetMediaStorageLocation();
+                if (mediaStorageLocation == "")
                     throw new Exception("Unable to find PlayLater's Media Storage Location");
-                _SkipFilePath = MediaStorageLocation;
+                SkipFilePath = mediaStorageLocation;
             }
-            if (!Directory.Exists(_SkipFilePath))
-                throw new Exception(String.Format("Queue List data path does not exists: {0}", _SkipFilePath));
+            if (!Directory.Exists(SkipFilePath))
+                throw new Exception(String.Format("Queue List data path does not exists: {0}", SkipFilePath));
         }
 
         /// <summary>
-        /// Adds the supplied Media item to the list of already queued media.
+        ///     Adds the supplied Media item to the list of already queued media.
         /// </summary>
-        public void AddMediaToList(PlayOnVideo Media)
+        public void AddMediaToList(PlayOnVideo media)
         {
-            string SkipFileName = SkipFileNameFromMedia(Media);
-            using (FileStream fs = new FileStream(SkipFileName, FileMode.CreateNew)) { };
+            var skipFileName = SkipFileNameFromMedia(media);
+            var fs = new FileStream(skipFileName, FileMode.CreateNew);
+            fs.Dispose();
         }
 
         /// <summary>
-        /// Generates the skip filename for a media item.
+        ///     Generates the skip filename for a media item.
         /// </summary>
-        private string SkipFileNameFromMedia(PlayOnVideo Media)
+        private string SkipFileNameFromMedia(PlayOnVideo media)
         {
-            string temp = String.Format("{0} - {1}.playpass.skip", Media.Series, Media.MediaTitle);
-            Regex re = new Regex("[<>:\"/\\|?*]");
+            var temp = String.Format("{0} - {1}.playpass.skip", media.Series, media.MediaTitle);
+            var re = new Regex("[<>:\"/\\|?*]");
             temp = re.Replace(temp, "_").TrimStart(' ', '-');
-            return Path.Combine(_SkipFilePath, temp);
+            return Path.Combine(SkipFilePath, temp);
         }
 
         /// <summary>
-        /// Indicates if a skip file exists for the supplied media item.
+        ///     Indicates if a skip file exists for the supplied media item.
         /// </summary>
-        public bool MediaInList(PlayOnVideo Media)
+        public bool MediaInList(PlayOnVideo media)
         {
-            return File.Exists(SkipFileNameFromMedia(Media));
+            return File.Exists(SkipFileNameFromMedia(media));
         }
-
     }
 }

@@ -1,50 +1,52 @@
-﻿using Microsoft.Win32;
+﻿using System.IO;
+using Microsoft.Win32;
 
 namespace PlaySharp
 {
-
     /// <summary>
-    /// A static class used to get settings from the locally installed PlayOn instance.
+    ///     A static class used to get settings from the locally installed PlayOn instance.
     /// </summary>
     public static class PlayOnSettings
     {
         /// <summary>
-        /// Gets the PlayOn Media Storage Location value from the registry.
+        ///     Gets the PlayOn Media Storage Location value from the registry.
         /// </summary>
         public static string GetMediaStorageLocation()
         {
-            RegistryKey Reg = Registry.LocalMachine.OpenSubKey(GetPlayOnSettingsRegistryKey());
-            foreach (string Item in Reg.GetValue("mediaStoragePaths").ToString().Split('*'))
-                if (System.IO.Directory.Exists(Item))
-                    return Item;
+            var reg = Registry.LocalMachine.OpenSubKey(GetPlayOnSettingsRegistryKey());
+            if (reg == null)
+                return "";
+            var regValue = reg.GetValue("mediaStoragePaths");
+            if (regValue == null)
+                return "";
+            foreach (var item in regValue.ToString().Split('*'))
+                if (Directory.Exists(item))
+                    return item;
             return "";
         }
 
         /// <summary>
-        /// Gets the PlayOn settings registry key.
+        ///     Gets the PlayOn settings registry key.
         /// </summary>
         public static string GetPlayOnSettingsRegistryKey()
         {
-            const string MediaMallBaseKey = "Software\\{0}MediaMall\\MediaMall\\CurrentVersion\\Settings";
-            string Key = string.Format(MediaMallBaseKey, "Wow6432Node\\");
-            RegistryKey Reg = Registry.LocalMachine.OpenSubKey(Key);
-            if (Reg == null)
-                Key =  string.Format(MediaMallBaseKey, "");
-            return Key;
+            const string mediaMallBaseKey = "Software\\{0}MediaMall\\MediaMall\\CurrentVersion\\Settings";
+            var key = string.Format(mediaMallBaseKey, "Wow6432Node\\");
+            var reg = Registry.LocalMachine.OpenSubKey(key);
+            if (reg == null)
+                key = string.Format(mediaMallBaseKey, "");
+            return key;
         }
 
         /// <summary>
-        /// Gets the PlayOn Video Format value from the registry.
+        ///     Gets the PlayOn Video Format value from the registry.
         /// </summary>
         public static string GetPlayLaterVideoFormat()
         {
-            RegistryKey Reg = Registry.LocalMachine.OpenSubKey(GetPlayOnSettingsRegistryKey());
-            if (Reg.GetValue("playLaterVideoFormat", 0).ToString() == "1")
-                return ".plv";
-            else
-                return ".mp4";
+            var reg = Registry.LocalMachine.OpenSubKey(GetPlayOnSettingsRegistryKey());
+            if (reg != null)
+                return reg.GetValue("playLaterVideoFormat", 0).ToString() == "1" ? ".plv" : ".mp4";
+            return "";
         }
-
     }
-
 }

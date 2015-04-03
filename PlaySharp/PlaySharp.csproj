@@ -31,13 +31,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PlayOn.cs" />
+    <Compile Include="PlayOnCatalog.cs" />
+    <Compile Include="PlayOnConstants.cs" />
+    <Compile Include="PlayOnFolder.cs" />
+    <Compile Include="PlayOnItem.cs" />
     <Compile Include="PlayOnSettings.cs" />
-    <Compile Include="PlaySharp.cs" />
-    <Compile Include="PlayOnItems.cs" />
+    <Compile Include="PlayOnVideo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util.cs" />
   </ItemGroup>

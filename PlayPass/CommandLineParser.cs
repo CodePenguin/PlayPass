@@ -4,45 +4,45 @@ using System.IO;
 namespace PlayPass
 {
     /// <summary>
-    /// A class that parsers the command line and simplifies access to valid parameters
+    ///     A class that parsers the command line and simplifies access to valid parameters
     /// </summary>
-    class CommandLineParser
+    internal class CommandLineParser
     {
-        private string _ConfigFileName = Path.Combine(Directory.GetCurrentDirectory(), "PlayPass.cfg");
-        private bool _QueueMode = false;
-        private bool _SkipMode = false;
-        private bool _VerboseMode = false;
+        private string _configFileName = Path.Combine(Directory.GetCurrentDirectory(), "PlayPass.cfg");
 
         public CommandLineParser(string[] args)
         {
             Parse(args);
         }
 
+        public string ConfigFileName
+        {
+            get { return _configFileName; }
+        }
+
+        public bool QueueMode { get; private set; }
+        public bool SkipMode { get; private set; }
+        public bool VerboseMode { get; private set; }
+
         private void Parse(string[] args)
         {
-            for (int i = 0; i < args.Length; i++ )
+            for (var i = 0; i < args.Length; i++)
             {
-                string arg = args[i].ToLower();
+                var arg = args[i].ToLower();
                 if (arg == "-queue")
-                    _QueueMode = true;
+                    QueueMode = true;
                 else if (arg == "-skip")
-                    _SkipMode = true;
+                    SkipMode = true;
                 else if (arg == "-verbose")
-                    _VerboseMode = true;
+                    VerboseMode = true;
                 else if (!arg.StartsWith("-") && i == args.Length - 1)
-                    _ConfigFileName = args[i];
+                    _configFileName = args[i];
                 else
                     throw new ApplicationException(String.Format("Invalid command line: {0}", args[i]));
             }
-   
+
             if (!File.Exists(ConfigFileName))
                 throw new ApplicationException("Config file not found: " + ConfigFileName);
         }
-
-        public string ConfigFileName { get { return _ConfigFileName; } }
-        public bool QueueMode { get { return _QueueMode; } }
-        public bool SkipMode { get { return _SkipMode; } }
-        public bool VerboseMode { get { return _VerboseMode; } }
     }
-
 }

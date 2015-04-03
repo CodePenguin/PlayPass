@@ -1,76 +1,73 @@
-﻿using System.Xml;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using System.Xml;
 
 namespace PlaySharp
 {
-
     public static class Util
     {
         /// <summary>
-        /// Gets the attribute value of a node as a string or returns DefaultValue if it doesn't exist.
+        ///     Gets the attribute value of a node as a string or returns DefaultValue if it doesn't exist.
         /// </summary>
-        public static string GetNodeAttributeValue(XmlNode Node, string AttributeName, string DefaultValue)
+        public static string GetNodeAttributeValue(XmlNode node, string attributeName, string defaultValue)
         {
-            if (Node != null) {
-                XmlAttribute attr = Node.Attributes[AttributeName];
-                if (attr != null)
-                    return attr.Value;
-            }
-            return DefaultValue;
+            if (node == null)
+                return defaultValue;
+            if (node.Attributes == null)
+                return defaultValue;
+            var attr = node.Attributes[attributeName];
+            return attr != null ? attr.Value : defaultValue;
         }
 
         /// <summary>
-        /// Gets the attribute value of a node as a string or returns a blank string if it doesn't exist.
+        ///     Gets the attribute value of a node as a string or returns a blank string if it doesn't exist.
         /// </summary>
-        public static string GetNodeAttributeValue(XmlNode Node, string AttributeName)
+        public static string GetNodeAttributeValue(XmlNode node, string attributeName)
         {
-            return GetNodeAttributeValue(Node, AttributeName, "");
+            return GetNodeAttributeValue(node, attributeName, "");
         }
 
         /// <summary>
-        /// Gets the InnerText of a node as a string or returns DefaultValue if it doesn't exist.
+        ///     Gets the InnerText of a node as a string or returns DefaultValue if it doesn't exist.
         /// </summary>
-        public static string GetNodeInnerText(XmlNode Node, string DefaultValue)
+        public static string GetNodeInnerText(XmlNode node, string defaultValue)
         {
-            if (Node != null)
-                return Node.InnerText;
-            return DefaultValue;
+            return node != null ? node.InnerText : defaultValue;
         }
 
         /// <summary>
-        /// Gets the InnerText of a node as a string or returns a blank string if it doesn't exist.
+        ///     Gets the InnerText of a node as a string or returns a blank string if it doesn't exist.
         /// </summary>
-        public static string GetNodeInnerText(XmlNode Node)
+        public static string GetNodeInnerText(XmlNode node)
         {
-            return GetNodeInnerText(Node, "");
+            return GetNodeInnerText(node, "");
         }
 
         /// <summary>
-        /// Gets the attribute value of the first child node of ParentNode that matches the XPath expression ChildNodePath as a string or returns DefaultValue if it doesn't exist.
+        ///     Gets the attribute value of the first child node of ParentNode that matches the XPath expression ChildNodePath as a
+        ///     string or returns DefaultValue if it doesn't exist.
         /// </summary>
-        public static string GetChildNodeAttributeValue(XmlNode ParentNode, string ChildNodePath, string AttributeName, string DefaultValue)
+        public static string GetChildNodeAttributeValue(XmlNode parentNode, string childNodePath, string attributeName, string defaultValue)
         {
-            if (ParentNode != null)
-                return GetNodeAttributeValue(ParentNode.SelectSingleNode(ChildNodePath), AttributeName, DefaultValue);
-            return DefaultValue;
+            return parentNode != null ? GetNodeAttributeValue(parentNode.SelectSingleNode(childNodePath), attributeName, defaultValue) : defaultValue;
         }
 
         /// <summary>
-        /// Gets the attribute value of the first child node of ParentNode that matches the XPath expression ChildNodePath as a string or returns a blank string if it doesn't exist.
+        ///     Gets the attribute value of the first child node of ParentNode that matches the XPath expression ChildNodePath as a
+        ///     string or returns a blank string if it doesn't exist.
         /// </summary>
-        public static string GetChildNodeAttributeValue(XmlNode ParentNode, string ChildName, string AttributeName)
+        public static string GetChildNodeAttributeValue(XmlNode parentNode, string childName, string attributeName)
         {
-            return GetChildNodeAttributeValue(ParentNode, ChildName, AttributeName, "");
+            return GetChildNodeAttributeValue(parentNode, childName, attributeName, "");
         }
 
         /// <summary>
-        /// Returns true if the string Value matches the string Pattern using * to match multiple characters and ? to match a single character.
+        ///     Returns true if the string Value matches the string Pattern using * to match multiple characters and ? to match a
+        ///     single character.
         /// </summary>
         /// <returns></returns>
-        public static bool MatchesPattern(string Value, string Pattern)
+        public static bool MatchesPattern(string value, string pattern)
         {
-            return new Regex("(?i)^" + Regex.Escape(Pattern).Replace(@"\*", ".*").Replace(@"\?",".") + "$").IsMatch(Value);
+            return new Regex("(?i)^" + Regex.Escape(pattern).Replace(@"\*", ".*").Replace(@"\?", ".") + "$").IsMatch(value);
         }
     }
-
 }

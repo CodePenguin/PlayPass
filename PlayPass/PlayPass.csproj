@@ -38,6 +38,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandLineParser.cs" />
+    <Compile Include="ConsoleLogger.cs" />
+    <Compile Include="ILogger.cs" />
+    <Compile Include="LogManager.cs" />
     <Compile Include="PlayPass.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
