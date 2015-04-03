@@ -137,18 +137,18 @@ namespace PlaySharp
         {
             base.LoadFromNode(node);
 
-            if (node.HasChildNodes)
-            {
-                _artUrlLarge = Util.GetChildNodeAttributeValue(node, "media", "art");
-                _airDate = Util.GetChildNodeAttributeValue(node, "date", "name");
-                _description = Util.GetChildNodeAttributeValue(node, "description", "name");
-                _mediaTitle = Util.GetChildNodeAttributeValue(node, "media_title", "name");
-                _mediaUrl = Util.GetChildNodeAttributeValue(node, "media", "src");
-                _playLaterName = Util.GetChildNodeAttributeValue(node, "media_playlater", "name");
-                _playLaterUrl = Util.GetChildNodeAttributeValue(node, "media_playlater", "src");
-                _runTime = TimeSpan.Parse(Util.GetChildNodeAttributeValue(node, "time", "name"));
-                _series = Util.GetChildNodeAttributeValue(node, "series", "name");
-            }
+            if (!node.HasChildNodes) 
+                return;
+
+            _artUrlLarge = Util.GetChildNodeAttributeValue(node, "media", "art");
+            _airDate = Util.GetChildNodeAttributeValue(node, "date", "name");
+            _description = Util.GetChildNodeAttributeValue(node, "description", "name");
+            _mediaTitle = Util.GetChildNodeAttributeValue(node, "media_title", "name");
+            _mediaUrl = Util.GetChildNodeAttributeValue(node, "media", "src");
+            _playLaterName = Util.GetChildNodeAttributeValue(node, "media_playlater", "name");
+            _playLaterUrl = Util.GetChildNodeAttributeValue(node, "media_playlater", "src");
+            _runTime = TimeSpan.Parse(Util.GetChildNodeAttributeValue(node, "time", "name"));
+            _series = Util.GetChildNodeAttributeValue(node, "series", "name");
         }
 
         private void LoadDetails()
@@ -159,29 +159,7 @@ namespace PlaySharp
             _loadedDetails = true;
         }
 
-        /// <summary>
-        ///     Attempts to queue this video item in PlayLater and indicates the result.
-        /// </summary>
-        public QueueVideoResult AddToPlayLaterQueue()
-        {
-            if (PlayLaterUrl == "")
-                return QueueVideoResult.PlayLaterNotFound;
-            var doc = PlayOn.XmlRequest(PlayLaterUrl);
-            var success = (Util.GetNodeInnerText(doc.SelectSingleNode("result/status")) == "true");
-            var message = Util.GetNodeInnerText(doc.SelectSingleNode("result/msg"));
-            if (success)
-                return QueueVideoResult.Success;
-            if (message.IndexOf("already", StringComparison.Ordinal) > -1)
-                return QueueVideoResult.AlreadyInQueue;
-            return QueueVideoResult.Failed;
-        }
     }
 
-    public enum QueueVideoResult
-    {
-        AlreadyInQueue,
-        PlayLaterNotFound,
-        Success,
-        Failed
-    };
+
 }

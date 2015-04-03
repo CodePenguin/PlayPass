@@ -131,6 +131,23 @@ namespace PlaySharp
         }
 
         /// <summary>
+        ///     Attempts to queue this video item in PlayLater and indicates the result.
+        /// </summary>
+        public PlayOnConstants.QueueVideoResult QueueMedia(PlayOnVideo media)
+        {
+            if (media.PlayLaterUrl == "")
+                return PlayOnConstants.QueueVideoResult.PlayLaterNotFound;
+            var doc = XmlRequest(media.PlayLaterUrl);
+            var success = (Util.GetNodeInnerText(doc.SelectSingleNode("result/status")) == "true");
+            var message = Util.GetNodeInnerText(doc.SelectSingleNode("result/msg"));
+            if (success)
+                return PlayOnConstants.QueueVideoResult.Success;
+            if (message.IndexOf("already", StringComparison.Ordinal) > -1)
+                return PlayOnConstants.QueueVideoResult.AlreadyInQueue;
+            return PlayOnConstants.QueueVideoResult.Failed;
+        }
+
+        /// <summary>
         ///     Returns an XmlDocument from a URL.
         /// </summary>
         /// <param name="url">A relative PlayOn URL.</param>

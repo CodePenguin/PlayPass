@@ -9,7 +9,7 @@ namespace PlaySharp
     {
         protected PlayOn PlayOn;
 
-        public PlayOnItem(PlayOn playOn)
+        protected PlayOnItem(PlayOn playOn)
         {
             PlayOn = playOn;
         }

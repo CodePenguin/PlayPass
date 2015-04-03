@@ -120,12 +120,12 @@ namespace PlayPassEngine
             {
                 try
                 {
-                    var queueResult = item.AddToPlayLaterQueue();
-                    if (queueResult == QueueVideoResult.PlayLaterNotFound)
+                    var queueResult = _playOn.QueueMedia(item);
+                    if (queueResult == PlayOnConstants.QueueVideoResult.PlayLaterNotFound)
                         message = "PlayLater queue link not found. PlayLater may not be running.";
-                    else if (queueResult == QueueVideoResult.AlreadyInQueue)
+                    else if (queueResult == PlayOnConstants.QueueVideoResult.AlreadyInQueue)
                         message = "Already queued.";
-                    success = (queueResult == QueueVideoResult.Success);
+                    success = (queueResult == PlayOnConstants.QueueVideoResult.Success);
                     if (success)
                         _queueList.AddMediaToList(item);
                 }

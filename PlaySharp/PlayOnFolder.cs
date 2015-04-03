@@ -18,7 +18,7 @@ namespace PlaySharp
         /// <summary>
         ///     A list containing all child PlayOn items associated with this item.
         /// </summary>
-        public List<PlayOnItem> Items
+        public IEnumerable<PlayOnItem> Items
         {
             get
             {
