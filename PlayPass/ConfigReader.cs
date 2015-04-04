@@ -34,7 +34,7 @@ namespace PlayPass
         public IQueueList GetQueueList()
         {
             var queueListNode = _config.SelectSingleNode("playpass/settings/queuelist");
-            var connectionString = Util.GetNodeAttributeValue(queueListNode, "queuelist", "Provider=FileQueueList");
+            var connectionString = Util.GetNodeAttributeValue(queueListNode, "settings", "Provider=FileQueueList");
             return QueueListFactory.GetQueueList(connectionString);
         }
 
