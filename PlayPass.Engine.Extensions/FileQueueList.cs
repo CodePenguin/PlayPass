@@ -7,7 +7,7 @@ using PlaySharp;
 namespace PlayPass.Engine.Extensions
 {
     /// <summary>
-    ///     A class that keeps track of previously queued media so it is not continually downloaded.
+    ///     An IQueueList implementation that keeps track of previously queued media using the file system.
     /// </summary>
     public class FileQueueList : IQueueList
     {

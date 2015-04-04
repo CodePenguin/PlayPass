@@ -7,6 +7,9 @@ using PlaySharp;
 
 namespace PlayPass
 {
+    /// <summary>
+    ///     A class that reads the config file
+    /// </summary>
     internal class ConfigReader
     {
         private readonly XmlDocument _config = new XmlDocument();

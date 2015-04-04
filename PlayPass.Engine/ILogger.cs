@@ -2,6 +2,9 @@
 
 namespace PlayPass.Engine
 {
+    /// <summary>
+    ///     An interface for log classes that can handle log messages with specific depths and visibility
+    /// </summary>
     public interface ILogger
     {
         bool VerboseMode { set; }

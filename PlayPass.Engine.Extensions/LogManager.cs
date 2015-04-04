@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace PlayPass.Engine.Extensions
 {
+    /// <summary>
+    ///     A ILogManager implementation that sends all logs to the initialized loggers
+    /// </summary>
     public class LogManager : ILogManager
     {
         private readonly List<ILogger> _loggers = new List<ILogger>();

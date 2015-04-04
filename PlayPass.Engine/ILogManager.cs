@@ -2,6 +2,9 @@
 
 namespace PlayPass.Engine
 {
+    /// <summary>
+    ///     An interface for logging to multiple loggers that can handle log messages with specific depths and visibility
+    /// </summary>
     public interface ILogManager
     {
         /// <summary>

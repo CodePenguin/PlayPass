@@ -2,6 +2,9 @@
 
 namespace PlayPass.Engine.Extensions
 {
+    /// <summary>
+    ///     A custom logger that outputs to the console.
+    /// </summary>
     public class ConsoleLogger : ILogger
     {
         private int _logDepth;

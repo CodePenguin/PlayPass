@@ -2,6 +2,9 @@
 
 namespace PlayPass.Engine
 {
+    /// <summary>
+    ///     A basic data structure that represents an action to perform.  PassActions can be nested inside of each other.
+    /// </summary>
     public class PassAction
     {
         public PassAction(string name, PassActionType type)

@@ -3,6 +3,9 @@ using PlaySharp;
 
 namespace PlayPass.Engine.Extensions
 {
+    /// <summary>
+    ///     An IQueueList implementation that keeps track of previously queued media in memory.
+    /// </summary>
     public class MemoryQueueList : IQueueList
     {
         private readonly List<string> _list = new List<string>();

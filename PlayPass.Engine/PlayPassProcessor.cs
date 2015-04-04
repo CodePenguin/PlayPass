@@ -3,6 +3,9 @@ using PlaySharp;
 
 namespace PlayPass.Engine
 {
+    /// <summary>
+    ///     The core processing engine for PlayPass that performs the actions associated with passes.
+    /// </summary>
     public class PlayPassProcessor
     {
         private readonly ILogManager _logManager;

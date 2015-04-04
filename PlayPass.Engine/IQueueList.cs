@@ -2,6 +2,9 @@
 
 namespace PlayPass.Engine
 {
+    /// <summary>
+    ///     An interface that keeps track of previously recorded media
+    /// </summary>
     public interface IQueueList
     {
         /// <summary>

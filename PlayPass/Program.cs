@@ -40,6 +40,8 @@ namespace PlayPass
                     QueueMode = commandLine.QueueMode,
                     SkipMode = commandLine.SkipMode
                 };
+
+                // Load and process Passes
                 var passes = new PassItems();
                 config.GetPasses(passes);
 

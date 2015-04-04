@@ -4,6 +4,9 @@ using System.IO;
 
 namespace PlayPass.Engine.Extensions
 {
+    /// <summary>
+    ///     A configurable custom logger that outputs to textfiles.
+    /// </summary>
     public class TextFileLogger : ILogger
     {
         private StreamWriter _file;

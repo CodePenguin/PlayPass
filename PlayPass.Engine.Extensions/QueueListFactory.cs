@@ -4,6 +4,9 @@ using System.Data.Common;
 
 namespace PlayPass.Engine.Extensions
 {
+    /// <summary>
+    ///     A factory class that registers and initializes QueueList classes
+    /// </summary>
     public static class QueueListFactory
     {
         private static readonly Dictionary<string, Type> Classes = new Dictionary<string, Type>();

@@ -2,6 +2,9 @@
 
 namespace PlayPass.Engine
 {
+    /// <summary>
+    ///     A basic data structure to represent passes.  Passes can hold many PassActions.
+    /// </summary>
     public class PassItem
     {
         public PassItem(string description, bool enabled)
