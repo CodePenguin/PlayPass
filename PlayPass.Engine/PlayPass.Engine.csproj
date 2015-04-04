@@ -7,8 +7,8 @@
     <ProjectGuid>{4BC4E848-04CD-42B5-B3CB-7859E02998B9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PlayPassEngine</RootNamespace>
-    <AssemblyName>PlayPassEngine</AssemblyName>
+    <RootNamespace>PlayPass.Engine</RootNamespace>
+    <AssemblyName>PlayPass.Engine</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

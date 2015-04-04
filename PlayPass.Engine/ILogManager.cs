@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PlayPassEngine
+namespace PlayPass.Engine
 {
     public interface ILogManager
     {

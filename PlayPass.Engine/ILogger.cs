@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PlayPassEngine
+namespace PlayPass.Engine
 {
     public interface ILogger
     {

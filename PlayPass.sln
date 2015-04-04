@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlaySharp", "PlaySharp\Play
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayPass", "PlayPass\PlayPass.csproj", "{6EA321DF-5F8E-4CC6-B825-5725B2BC0A85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayPassEngine", "PlayPassEngine\PlayPassEngine.csproj", "{4BC4E848-04CD-42B5-B3CB-7859E02998B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayPass.Engine", "PlayPass.Engine\PlayPass.Engine.csproj", "{4BC4E848-04CD-42B5-B3CB-7859E02998B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

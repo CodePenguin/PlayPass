@@ -1,7 +1,7 @@
 ﻿using System;
 using PlaySharp;
 
-namespace PlayPassEngine
+namespace PlayPass.Engine
 {
     public class PlayPassProcessor
     {

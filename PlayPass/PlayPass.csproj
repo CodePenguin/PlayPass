@@ -50,9 +50,9 @@
     <Compile Include="TextFileLogger.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PlayPassEngine\PlayPassEngine.csproj">
+    <ProjectReference Include="..\PlayPass.Engine\PlayPass.Engine.csproj">
       <Project>{4bc4e848-04cd-42b5-b3cb-7859e02998b9}</Project>
-      <Name>PlayPassEngine</Name>
+      <Name>PlayPass.Engine</Name>
     </ProjectReference>
     <ProjectReference Include="..\PlaySharp\PlaySharp.csproj">
       <Project>{4cae46ff-c6ed-46fc-a8ed-ee4984ce2fe6}</Project>
