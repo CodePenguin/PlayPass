@@ -18,8 +18,9 @@ namespace PlayPass
         /// </summary>
         public void Log(string message)
         {
+            var dateTime = DateTime.Now;
             foreach (var logger in _loggers)
-                logger.Log(message);
+                logger.Log(dateTime, message);
         }
 
         /// <summary>
@@ -31,12 +32,23 @@ namespace PlayPass
         }
 
         /// <summary>
+        ///     Logs an exception to all registered loggers
+        /// </summary>
+        public void LogException(Exception exception)
+        {
+            var dateTime = DateTime.Now;
+            foreach (var logger in _loggers)
+                logger.LogException(dateTime, exception);            
+        }
+
+        /// <summary>
         ///     Writes a verbose log message to all registered loggers
         /// </summary>
         public void LogVerbose(string message)
         {
+            var dateTime = DateTime.Now;
             foreach (var logger in _loggers)
-                logger.LogVerbose(message);
+                logger.LogVerbose(dateTime, message);
         }
 
         /// <summary>
@@ -44,9 +56,7 @@ namespace PlayPass
         /// </summary>
         public void LogVerbose(string message, params object[] args)
         {
-            message = String.Format(message, args);
-            foreach (var logger in _loggers)
-                logger.LogVerbose(message);
+            LogVerbose(String.Format(message, args));
         }
     }
 }

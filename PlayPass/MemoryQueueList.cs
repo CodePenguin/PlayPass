@@ -13,7 +13,7 @@ namespace PlayPass
         /// </summary>
         public static void RegisterClass()
         {
-            QueueListFactory.RegisterClass("MEMORY", typeof(MemoryQueueList));
+            QueueListFactory.RegisterClass(typeof(MemoryQueueList));
         }
 
         /// <summary>

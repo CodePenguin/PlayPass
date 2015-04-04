@@ -39,7 +39,6 @@ namespace PlaySharp
         ///     Returns true if the string Value matches the string Pattern using * to match multiple characters and ? to match a
         ///     single character.
         /// </summary>
-        /// <returns></returns>
         public static bool MatchesPattern(string value, string pattern)
         {
             return new Regex("(?i)^" + Regex.Escape(pattern).Replace(@"\*", ".*").Replace(@"\?", ".") + "$").IsMatch(value);

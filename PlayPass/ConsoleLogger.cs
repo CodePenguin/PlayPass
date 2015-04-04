@@ -7,17 +7,24 @@ namespace PlayPass
     {
         public bool VerboseMode { get; set; }
 
-        public ConsoleLogger(bool verboseMode)
+        public void Initialize(string connectionString)
         {
-            VerboseMode = verboseMode;
+            // Do nothing
         }
 
-        public void Log(string msg)
+        public void Log(DateTime dateTime, string msg)
         {
             Console.WriteLine(msg);
         }
 
-        public void LogVerbose(string msg)
+        public void LogException(DateTime dateTime, Exception exception)
+        {
+            Console.WriteLine("The following exception has occurred: " + exception.Message);
+            if (!(exception is ApplicationException))
+                Console.WriteLine("Stack Trace: " + exception);            
+        }
+
+        public void LogVerbose(DateTime dateTime, string msg)
         {
             if (VerboseMode)
                 Console.WriteLine(msg);

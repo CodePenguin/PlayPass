@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PlayPassEngine
 {
@@ -7,22 +8,27 @@ namespace PlayPassEngine
         IList<ILogger> Loggers { get; }
 
         /// <summary>
-        ///     Writes a log message to all the registered loggers
+        ///     Logs a message to all the registered loggers
         /// </summary>
         void Log(string message);
 
         /// <summary>
-        ///     Writes a formatted log message to all the registered loggers
+        ///     Logs a formatted message to all the registered loggers
         /// </summary>
         void Log(string message, params object[] args);
 
         /// <summary>
-        ///     Writes a verbose log message to all registered loggers
+        ///     Logs an exception to all registered loggers
+        /// </summary>
+        void LogException(Exception exception);
+
+        /// <summary>
+        ///     Logs a verbose message to all registered loggers
         /// </summary>
         void LogVerbose(string message);
 
         /// <summary>
-        ///     Writes a formatted verbose log message to all registered loggers
+        ///     Logs a formatted verbose message to all registered loggers
         /// </summary>
         void LogVerbose(string message, params object[] args);
 

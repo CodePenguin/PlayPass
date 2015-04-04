@@ -16,7 +16,7 @@ namespace PlayPass
 
         public static void RegisterClass()
         {
-            QueueListFactory.RegisterClass("FILE", typeof(FileQueueList));
+            QueueListFactory.RegisterClass(typeof(FileQueueList));
         }
 
         /// <summary>

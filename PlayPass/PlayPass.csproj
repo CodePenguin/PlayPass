@@ -40,12 +40,14 @@
     <Compile Include="CommandLineParser.cs" />
     <Compile Include="ConfigReader.cs" />
     <Compile Include="ConsoleLogger.cs" />
+    <Compile Include="LoggerFactory.cs" />
     <Compile Include="LogManager.cs" />
     <Compile Include="MemoryQueueList.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FileQueueList.cs" />
     <Compile Include="QueueListFactory.cs" />
+    <Compile Include="TextFileLogger.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PlayPassEngine\PlayPassEngine.csproj">

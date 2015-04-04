@@ -1,27 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Text;
 using PlayPassEngine;
 
 namespace PlayPass
 {
-    static class QueueListFactory
+    class LoggerFactory
     {
-        private static readonly Dictionary<string, Type> _classes = new Dictionary<string, Type>();
 
-        public static IQueueList GetQueueList(string connectionString)
+        private readonly static Dictionary<string, Type> _classes = new Dictionary<string, Type>();
+
+        public static ILogger GetLogger(string connectionString, bool verboseMode)
         {
             var parser = new DbConnectionStringBuilder() { ConnectionString = connectionString };
             if (!parser.ContainsKey("Provider"))
-                throw new Exception("Queue List Provider Type is not specified");
+                throw new Exception("Logger Provider Type is not specified");
 
             var providerType = parser["Provider"].ToString().ToUpper();
 
             if (!_classes.ContainsKey(providerType))
-                throw new Exception(String.Format("Unregistered Queue List Provider Type: {0}", providerType));
-
+                throw new Exception(String.Format("Unregistered Logger Provider Type: {0}", providerType));
+            
             var type = _classes[providerType];
-            var instance = (IQueueList) Activator.CreateInstance(type);
+            var instance = (ILogger)Activator.CreateInstance(type);
+            instance.VerboseMode = verboseMode;
             instance.Initialize(connectionString);
             return instance;
         }
@@ -30,5 +33,6 @@ namespace PlayPass
         {
             _classes[type.Name.ToUpper()] = type;
         }
+
     }
 }
