@@ -10,21 +10,16 @@ namespace PlayPass
     /// <summary>
     ///     A class that keeps track of previously queued media so it is not continually downloaded.
     /// </summary>
-    class FileQueueList : IQueueList
+    internal class FileQueueList : IQueueList
     {
         private string _skipFilePath;
-
-        public static void RegisterClass()
-        {
-            QueueListFactory.RegisterClass(typeof(FileQueueList));
-        }
 
         /// <summary>
         ///     Initializes the Queue List with custom settings
         /// </summary>
         public void Initialize(string connectionString)
         {
-            var parser = new DbConnectionStringBuilder() { ConnectionString = connectionString };
+            var parser = new DbConnectionStringBuilder {ConnectionString = connectionString};
             if (parser.ContainsKey("Data Source"))
                 _skipFilePath = parser["Data Source"].ToString();
             else
@@ -35,7 +30,7 @@ namespace PlayPass
                 _skipFilePath = mediaStorageLocation;
             }
             if (!Directory.Exists(_skipFilePath))
-                throw new Exception(String.Format("Queue List data path does not exists: {0}", _skipFilePath));            
+                throw new Exception(String.Format("Queue List data path does not exists: {0}", _skipFilePath));
         }
 
         /// <summary>
@@ -49,6 +44,19 @@ namespace PlayPass
         }
 
         /// <summary>
+        ///     Indicates if a skip file exists for the supplied media item.
+        /// </summary>
+        public bool MediaInList(PlayOnVideo media)
+        {
+            return File.Exists(SkipFileNameFromMedia(media));
+        }
+
+        public static void RegisterClass()
+        {
+            QueueListFactory.RegisterClass(typeof (FileQueueList));
+        }
+
+        /// <summary>
         ///     Generates the skip filename for a media item.
         /// </summary>
         private string SkipFileNameFromMedia(PlayOnVideo media)
@@ -57,14 +65,6 @@ namespace PlayPass
             var re = new Regex("[<>:\"/\\|?*]");
             temp = re.Replace(temp, "_").TrimStart(' ', '-');
             return Path.Combine(_skipFilePath, temp);
-        }
-
-        /// <summary>
-        ///     Indicates if a skip file exists for the supplied media item.
-        /// </summary>
-        public bool MediaInList(PlayOnVideo media)
-        {
-            return File.Exists(SkipFileNameFromMedia(media));
         }
     }
 }

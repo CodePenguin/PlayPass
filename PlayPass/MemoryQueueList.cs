@@ -4,17 +4,9 @@ using PlaySharp;
 
 namespace PlayPass
 {
-    class MemoryQueueList : IQueueList
+    internal class MemoryQueueList : IQueueList
     {
         private readonly List<string> _list = new List<string>();
-
-        /// <summary>
-        ///     Registers this class with the QueueListFactory
-        /// </summary>
-        public static void RegisterClass()
-        {
-            QueueListFactory.RegisterClass(typeof(MemoryQueueList));
-        }
 
         /// <summary>
         ///     Initializes the Queue List with custom settings
@@ -35,19 +27,27 @@ namespace PlayPass
         }
 
         /// <summary>
-        ///     Generates the skip filename for a media item.
-        /// </summary>
-        private static string KeyFromMedia(PlayOnVideo media)
-        {
-            return media.Series + " - " + media.MediaTitle;
-        }
-
-        /// <summary>
         ///     Indicates if a skip file exists for the supplied media item.
         /// </summary>
         public bool MediaInList(PlayOnVideo media)
         {
             return _list.Contains(KeyFromMedia(media));
+        }
+
+        /// <summary>
+        ///     Registers this class with the QueueListFactory
+        /// </summary>
+        public static void RegisterClass()
+        {
+            QueueListFactory.RegisterClass(typeof (MemoryQueueList));
+        }
+
+        /// <summary>
+        ///     Generates the skip filename for a media item.
+        /// </summary>
+        private static string KeyFromMedia(PlayOnVideo media)
+        {
+            return media.Series + " - " + media.MediaTitle;
         }
     }
 }

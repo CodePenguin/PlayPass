@@ -32,7 +32,9 @@ namespace PlaySharp
         /// </summary>
         public static string GetChildNodeAttributeValue(XmlNode parentNode, string childNodePath, string attributeName, string defaultValue = "")
         {
-            return parentNode != null ? GetNodeAttributeValue(parentNode.SelectSingleNode(childNodePath), attributeName, defaultValue) : defaultValue;
+            return parentNode != null
+                ? GetNodeAttributeValue(parentNode.SelectSingleNode(childNodePath), attributeName, defaultValue)
+                : defaultValue;
         }
 
         /// <summary>

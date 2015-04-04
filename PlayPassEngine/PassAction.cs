@@ -4,21 +4,20 @@ namespace PlayPassEngine
 {
     public class PassAction
     {
-        public string Name { get; set; }
-        public PassActionType Type { get; set; }
-        public PassActions Actions { get; set; }
-
         public PassAction(string name, PassActionType type)
         {
             Actions = new PassActions();
             Name = name;
             Type = type;
         }
+
+        public string Name { get; private set; }
+        public PassActionType Type { get; private set; }
+        public PassActions Actions { get; private set; }
     }
 
     public class PassActions : List<PassAction>
     {
-        
     }
 
     public enum PassActionType

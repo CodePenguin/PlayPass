@@ -14,16 +14,6 @@ namespace PlaySharp
         private readonly WebClient _webClient;
 
         /// <summary>
-        ///     The ip address or machine name that PlayOn Server is installed on.
-        /// </summary>
-        public string ServerHost { get; set; }
-
-        /// <summary>
-        ///     The port that PlayOn Server is listening to.
-        /// </summary>
-        public int ServerPort { get; set; }
-
-        /// <summary>
         ///     Initializes a PlayOn object for the local machine and default port.
         /// </summary>
         public PlayOn()
@@ -43,6 +33,16 @@ namespace PlaySharp
             ServerHost = host;
             ServerPort = port;
         }
+
+        /// <summary>
+        ///     The ip address or machine name that PlayOn Server is installed on.
+        /// </summary>
+        public string ServerHost { get; set; }
+
+        /// <summary>
+        ///     The port that PlayOn Server is listening to.
+        /// </summary>
+        public int ServerPort { get; set; }
 
         /// <summary>
         ///     Deinitializes the PlayOn object.

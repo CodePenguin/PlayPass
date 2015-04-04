@@ -31,6 +31,5 @@ namespace PlayPassEngine
         ///     Logs a formatted verbose message to all registered loggers
         /// </summary>
         void LogVerbose(string message, params object[] args);
-
     }
 }

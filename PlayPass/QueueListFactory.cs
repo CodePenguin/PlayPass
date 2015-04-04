@@ -5,22 +5,22 @@ using PlayPassEngine;
 
 namespace PlayPass
 {
-    static class QueueListFactory
+    internal static class QueueListFactory
     {
-        private static readonly Dictionary<string, Type> _classes = new Dictionary<string, Type>();
+        private static readonly Dictionary<string, Type> Classes = new Dictionary<string, Type>();
 
         public static IQueueList GetQueueList(string connectionString)
         {
-            var parser = new DbConnectionStringBuilder() { ConnectionString = connectionString };
+            var parser = new DbConnectionStringBuilder {ConnectionString = connectionString};
             if (!parser.ContainsKey("Provider"))
                 throw new Exception("Queue List Provider Type is not specified");
 
             var providerType = parser["Provider"].ToString().ToUpper();
 
-            if (!_classes.ContainsKey(providerType))
+            if (!Classes.ContainsKey(providerType))
                 throw new Exception(String.Format("Unregistered Queue List Provider Type: {0}", providerType));
 
-            var type = _classes[providerType];
+            var type = Classes[providerType];
             var instance = (IQueueList) Activator.CreateInstance(type);
             instance.Initialize(connectionString);
             return instance;
@@ -28,7 +28,7 @@ namespace PlayPass
 
         public static void RegisterClass(Type type)
         {
-            _classes[type.Name.ToUpper()] = type;
+            Classes[type.Name.ToUpper()] = type;
         }
     }
 }

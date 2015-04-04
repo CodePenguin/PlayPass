@@ -21,7 +21,7 @@ namespace PlayPass
         {
             Console.WriteLine("The following exception has occurred: " + exception.Message);
             if (!(exception is ApplicationException))
-                Console.WriteLine("Stack Trace: " + exception);            
+                Console.WriteLine("Stack Trace: " + exception);
         }
 
         public void LogVerbose(DateTime dateTime, string msg)

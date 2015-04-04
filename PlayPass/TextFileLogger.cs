@@ -1,31 +1,23 @@
 ﻿using System;
 using System.Data.Common;
 using System.IO;
-using System.Security.Policy;
 using PlayPassEngine;
-using PlaySharp;
 
 namespace PlayPass
 {
-    class TextFileLogger : ILogger
+    internal class TextFileLogger : ILogger
     {
         private StreamWriter _file;
         public bool VerboseMode { get; set; }
 
-        /// <summary>
-        ///     Registers this class with the LoggerFactory
-        /// </summary>
-        public static void RegisterClass()
-        {
-            LoggerFactory.RegisterClass(typeof(TextFileLogger));
-        }
-
         public void Initialize(string connectionString)
         {
-            var parser = new DbConnectionStringBuilder() { ConnectionString = connectionString };
-            var fileName = parser.ContainsKey("Filename") ? parser["Filename"].ToString() : Path.Combine(Directory.GetCurrentDirectory(), "PlayPass.log");
+            var parser = new DbConnectionStringBuilder {ConnectionString = connectionString};
+            var fileName = parser.ContainsKey("Filename")
+                ? parser["Filename"].ToString()
+                : Path.Combine(Directory.GetCurrentDirectory(), "PlayPass.log");
             var appendMode = !parser.ContainsKey("Append") || (parser["Append"].ToString() == "1");
-            _file = new StreamWriter(fileName, appendMode) { AutoFlush = true };
+            _file = new StreamWriter(fileName, appendMode) {AutoFlush = true};
         }
 
         public void Log(DateTime dateTime, string msg)
@@ -47,5 +39,12 @@ namespace PlayPass
                 Log(dateTime, msg);
         }
 
+        /// <summary>
+        ///     Registers this class with the LoggerFactory
+        /// </summary>
+        public static void RegisterClass()
+        {
+            LoggerFactory.RegisterClass(typeof (TextFileLogger));
+        }
     }
 }

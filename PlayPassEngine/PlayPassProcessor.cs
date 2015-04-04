@@ -8,7 +8,6 @@ namespace PlayPassEngine
         private readonly ILogManager _logManager;
         private readonly PlayOn _playOn;
         private readonly IQueueList _queueList;
-
         public bool QueueMode;
         public bool SkipMode;
 
@@ -69,7 +68,7 @@ namespace PlayPassEngine
             var matchPattern = action.Name;
             var foundItem = false;
             _logManager.Log("Matching \"{0}\"...", matchPattern);
-            foreach (var childItem in ((PlayOnFolder)currentItem).Items)
+            foreach (var childItem in ((PlayOnFolder) currentItem).Items)
             {
                 _logManager.LogVerbose("Checking \"{0}\"...", childItem.Name);
                 if (!Util.MatchesPattern(childItem.Name, matchPattern))
@@ -86,7 +85,7 @@ namespace PlayPassEngine
                         break;
 
                     case PassActionType.Queue:
-                        if (!(childItem is PlayOnVideo)) 
+                        if (!(childItem is PlayOnVideo))
                             continue;
                         _logManager.Log("Queuing \"{0}\"...", childItem.Name);
                         QueueMedia((PlayOnVideo) childItem);
@@ -94,7 +93,7 @@ namespace PlayPassEngine
                 }
             }
             if (!foundItem)
-                _logManager.Log("No matches \"{0}\".", matchPattern);              
+                _logManager.Log("No matches \"{0}\".", matchPattern);
         }
 
         /// <summary>

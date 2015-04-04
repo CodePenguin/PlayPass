@@ -38,7 +38,7 @@ namespace PlayPass
         {
             var dateTime = DateTime.Now;
             foreach (var logger in _loggers)
-                logger.LogException(dateTime, exception);            
+                logger.LogException(dateTime, exception);
         }
 
         /// <summary>

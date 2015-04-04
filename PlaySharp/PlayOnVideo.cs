@@ -137,7 +137,7 @@ namespace PlaySharp
         {
             base.LoadFromNode(node);
 
-            if (!node.HasChildNodes) 
+            if (!node.HasChildNodes)
                 return;
 
             _artUrlLarge = Util.GetChildNodeAttributeValue(node, "media", "art");
@@ -158,8 +158,5 @@ namespace PlaySharp
             PlayOn.LoadItemDetails(this);
             _loadedDetails = true;
         }
-
     }
-
-
 }

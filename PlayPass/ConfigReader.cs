@@ -6,14 +6,9 @@ using PlaySharp;
 
 namespace PlayPass
 {
-    class ConfigReader
+    internal class ConfigReader
     {
-
         public IList<ILogger> Loggers;
-        public PassItems Passes { get; private set; }
-        public string QueueListConnectionString { get; set; }
-        public string ServerHost { get; set; }
-        public int ServerPort { get; set; }
 
         public ConfigReader(string fileName)
         {
@@ -29,7 +24,7 @@ namespace PlayPass
             var config = new XmlDocument();
             config.Load(fileName);
             var settingsNode = config.SelectSingleNode("playpass/settings");
-            if (settingsNode == null) 
+            if (settingsNode == null)
                 return;
             ServerHost = Util.GetNodeAttributeValue(settingsNode, "server", ServerHost);
             ServerPort = int.Parse(Util.GetNodeAttributeValue(settingsNode, "port", ServerPort.ToString()));
@@ -39,6 +34,11 @@ namespace PlayPass
 
             LoadPasses(config);
         }
+
+        public PassItems Passes { get; private set; }
+        public string QueueListConnectionString { get; private set; }
+        public string ServerHost { get; private set; }
+        public int ServerPort { get; private set; }
 
         private void LoadLoggers(XmlNode settingsNode)
         {
@@ -98,8 +98,5 @@ namespace PlayPass
                     throw new Exception(String.Format("Invalid PassItemType string: {0}", type));
             }
         }
-
-        
-
     }
 }

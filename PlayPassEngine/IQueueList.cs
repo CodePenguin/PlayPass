@@ -1,5 +1,4 @@
-﻿using System;
-using PlaySharp;
+﻿using PlaySharp;
 
 namespace PlayPassEngine
 {

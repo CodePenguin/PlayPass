@@ -6,7 +6,7 @@ using PlaySharp;
 
 namespace PlayPass
 {
-    static class Program
+    internal static class Program
     {
         public static void Main(string[] args)
         {
@@ -59,6 +59,5 @@ namespace PlayPass
             var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
             return fileVersionInfo.ProductVersion;
         }
-
     }
 }
