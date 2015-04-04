@@ -15,13 +15,13 @@ A console program written in C# that will automatically queue items for download
 ####PlaySharp
 A .NET 2.0 Assembly written in C# that handles all the communication between PlayPass and the PlayOn/PlayLater server.  It abstracts the PlayOn Server data protocols into easy to consume .NET native objects.  This could be used to create other kinds of interfaces.
 
-How to build it
+Download the latest release
 --------------------------------
-Open the PlayPass.sln file in Visual Studios (Only Visual Studios 2013 has been tested but earlier versions should work also) and select "Build Solution" from the "Build" menu.
+All releases of PlayPass are available for download at [https://github.com/CodePenguin/PlayPass/releases](https://github.com/CodePenguin/PlayPass/releases).
 
 How to use it
 --------------------------------
-You can compile from source or grab the latest release files and start from there.
+You can compile from source or grab the latest release files and start from there.  Check out the [Wiki](https://github.com/CodePenguin/PlayPass/wiki) for examples for various services and other advanced settings.
 
 Make a copy of the PlayPass.example.cfg and modify it to your liking.  The following is an example of a config file that will automatically queue up anything in your Hulu Queue.
 
@@ -76,6 +76,10 @@ Skip Mode creates a special filename.playpass.skip file for each file that would
 ####Scheduling
 You can use Window's built in Task Scheduler program to execute PlayPass whenever you want.  I've got mine going off every day at midnight.  This way you are in control of when items are queued for downloading.
 
+
+How to build it
+--------------------------------
+Open the PlayPass.sln file in Visual Studios (Only Visual Studios 2013 has been tested but earlier versions should work also) and select "Build Solution" from the "Build" menu.
 
 License
 --------------------------------
