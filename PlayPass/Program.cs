@@ -22,31 +22,38 @@ namespace PlayPass
 
                 var commandLine = new CommandLineParser(args);
                 var config = new ConfigReader(commandLine.ConfigFileName);
-                var queueList = QueueListFactory.GetQueueList(config.QueueListConnectionString);
 
                 // Initialize Loggers
                 logManager.Loggers.Add(new ConsoleLogger {VerboseMode = commandLine.VerboseMode});
-                foreach (var logger in config.Loggers)
-                    logManager.Loggers.Add(logger);
+                config.GetLoggers(logManager.Loggers);
 
                 logManager.Log("PlayPass Auto Queueing Engine Version {0}", Version());
 
-                logManager.LogVerbose("Connecting to {0}:{1}...", config.ServerHost, config.ServerPort);
-                var playOn = new PlayOn(config.ServerHost, config.ServerPort);
+                // Initialize PlayOn
+                var playOn = config.GetPlayOn();
+                logManager.LogVerbose("Connecting to {0}:{1}...", playOn.ServerHost, playOn.ServerPort);
 
+                // Initialize PlayPassProcessor
+                var queueList = config.GetQueueList();
                 var playPass = new PlayPassProcessor(playOn, logManager, queueList)
                 {
                     QueueMode = commandLine.QueueMode,
                     SkipMode = commandLine.SkipMode
                 };
-                playPass.ProcessPasses(config.Passes);
+                var passes = new PassItems();
+                config.GetPasses(passes);
+
+                playPass.ProcessPasses(passes);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("The following exception has occurred:\n   " + ex.Message);
+                if (logManager.Loggers.Count == 0)
+                {
+                    Console.WriteLine("The following exception has occurred:\n   " + ex.Message);
+                    if (!(ex is ApplicationException))
+                        Console.WriteLine("Stack Trace: " + ex);
+                }
                 logManager.LogException(ex);
-                if (!(ex is ApplicationException))
-                    Console.WriteLine("Stack Trace: " + ex);
             }
         }
 
