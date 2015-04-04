@@ -1,16 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace PlayPass.Engine
 {
     public interface ILogManager
     {
-        IList<ILogger> Loggers { get; }
+        /// <summary>
+        ///     Returns a an object to automatically increase and decrease the log depth
+        /// </summary>
+        IDisposable NextLogDepth();
 
         /// <summary>
-        ///     Logs a message to all the registered loggers
+        ///     Returns a an object to automatically increase and decrease the log depth when in verbose mode
         /// </summary>
-        void Log(string message);
+        IDisposable NextLogVerboseDepth();
 
         /// <summary>
         ///     Logs a formatted message to all the registered loggers
@@ -23,13 +25,9 @@ namespace PlayPass.Engine
         void LogException(Exception exception);
 
         /// <summary>
-        ///     Logs a verbose message to all registered loggers
-        /// </summary>
-        void LogVerbose(string message);
-
-        /// <summary>
         ///     Logs a formatted verbose message to all registered loggers
         /// </summary>
         void LogVerbose(string message, params object[] args);
-    }
+    }   
+
 }

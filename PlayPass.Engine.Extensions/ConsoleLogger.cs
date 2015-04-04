@@ -4,7 +4,20 @@ namespace PlayPass.Engine.Extensions
 {
     public class ConsoleLogger : ILogger
     {
+        private int _logDepth;
         public bool VerboseMode { get; set; }
+
+        public void DecrementLogDepth(bool verboseMode)
+        {
+            if (!verboseMode || VerboseMode)
+                _logDepth--;
+        }
+
+        public void IncrementLogDepth(bool verboseMode)
+        {
+            if (!verboseMode || VerboseMode)
+                _logDepth++;
+        }
 
         public void Initialize(string connectionString)
         {
@@ -13,20 +26,25 @@ namespace PlayPass.Engine.Extensions
 
         public void Log(DateTime dateTime, string msg)
         {
-            Console.WriteLine(msg);
+            Console.WriteLine(Padding() + msg);
         }
 
         public void LogException(DateTime dateTime, Exception exception)
         {
-            Console.WriteLine("The following exception has occurred: " + exception.Message);
+            Log(dateTime, "The following exception has occurred: " + exception.Message);
             if (!(exception is ApplicationException))
-                Console.WriteLine("Stack Trace: " + exception);
+                Log(dateTime, "Stack Trace: " + exception);
         }
 
         public void LogVerbose(DateTime dateTime, string msg)
         {
             if (VerboseMode)
-                Console.WriteLine(msg);
+                Log(dateTime, msg);
+        }
+
+        private string Padding()
+        {
+            return new String(' ', _logDepth * 2);
         }
     }
 }

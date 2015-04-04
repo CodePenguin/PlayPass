@@ -7,7 +7,20 @@ namespace PlayPass.Engine.Extensions
     public class TextFileLogger : ILogger
     {
         private StreamWriter _file;
-        public bool VerboseMode { get; set; }
+        private int _logDepth;
+        public bool VerboseMode { private get; set; }
+
+        public void DecrementLogDepth(bool verboseMode)
+        {
+            if (!verboseMode || VerboseMode)
+                _logDepth--;
+        }
+
+        public void IncrementLogDepth(bool verboseMode)
+        {
+            if (!verboseMode || VerboseMode)
+                _logDepth++;
+        }
 
         public void Initialize(string connectionString)
         {
@@ -21,7 +34,7 @@ namespace PlayPass.Engine.Extensions
 
         public void Log(DateTime dateTime, string msg)
         {
-            _file.WriteLine("{0} {1}: {2}", dateTime.ToShortDateString(), dateTime.ToLongTimeString(), msg);
+            _file.WriteLine("{0}:{1}{2}", dateTime.ToString("u"), Padding(), msg);
         }
 
         public void LogException(DateTime dateTime, Exception exception)
@@ -36,6 +49,11 @@ namespace PlayPass.Engine.Extensions
         {
             if (VerboseMode)
                 Log(dateTime, msg);
+        }
+
+        private string Padding()
+        {
+            return new String('\t', _logDepth + 1);
         }
 
         /// <summary>

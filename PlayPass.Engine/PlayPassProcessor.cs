@@ -34,18 +34,19 @@ namespace PlayPass.Engine
         {
             PlayOnItem currentItem = _playOn.GetCatalog();
             if (!pass.Enabled)
-                _logManager.Log("Skipping \"{0}\".", pass.Description);
+                _logManager.Log("Skipping pass \"{0}\".", pass.Description);
             else
             {
-                _logManager.Log("Processing \"{0}\"...", pass.Description);
+                _logManager.Log("Processing pass \"{0}\"...", pass.Description);
                 try
                 {
                     ProcessActions(currentItem, pass.Actions);
                 }
                 catch (Exception ex)
                 {
-                    _logManager.Log("Error processing pass: " + ex.Message);
+                    _logManager.LogException(ex);
                 }
+                _logManager.Log("Finished processing pass \"{0}\"...", pass.Description);
             }
         }
 
@@ -57,7 +58,10 @@ namespace PlayPass.Engine
             if (!(currentItem is PlayOnFolder))
                 return;
             foreach (var action in actions)
-                ProcessAction(currentItem, action);
+            {
+                using (_logManager.NextLogVerboseDepth())
+                    ProcessAction(currentItem, action);
+            }
         }
 
         /// <summary>
@@ -68,32 +72,39 @@ namespace PlayPass.Engine
             var matchPattern = action.Name;
             var foundItem = false;
             _logManager.Log("Matching \"{0}\"...", matchPattern);
-            foreach (var childItem in ((PlayOnFolder) currentItem).Items)
+            using (_logManager.NextLogDepth())
             {
-                _logManager.LogVerbose("Checking \"{0}\"...", childItem.Name);
-                if (!Util.MatchesPattern(childItem.Name, matchPattern))
-                    continue;
-                foundItem = true;
-                switch (action.Type)
+                foreach (var childItem in ((PlayOnFolder) currentItem).Items)
                 {
-                    case PassActionType.Scan:
-                        if (!(childItem is PlayOnFolder))
-                            continue;
-                        _logManager.Log("Entering \"{0}\"", childItem.Name);
-                        ProcessActions(childItem, action.Actions);
-                        _logManager.Log("Leaving \"{0}\"", childItem.Name);
-                        break;
+                    _logManager.LogVerbose("Checking \"{0}\"...", childItem.Name);
+                    if (!Util.MatchesPattern(childItem.Name, matchPattern))
+                        continue;
+                    foundItem = true;
+                    switch (action.Type)
+                    {
+                        case PassActionType.Scan:
+                            if (!(childItem is PlayOnFolder))
+                                continue;
+                            using (_logManager.NextLogVerboseDepth())
+                            {
+                                _logManager.LogVerbose("Entering \"{0}\"", childItem.Name);
+                                ProcessActions(childItem, action.Actions);
+                                _logManager.LogVerbose("Leaving \"{0}\"", childItem.Name);
+                            }
+                            break;
 
-                    case PassActionType.Queue:
-                        if (!(childItem is PlayOnVideo))
-                            continue;
-                        _logManager.Log("Queuing \"{0}\"...", childItem.Name);
-                        QueueMedia((PlayOnVideo) childItem);
-                        break;
+                        case PassActionType.Queue:
+                            if (!(childItem is PlayOnVideo))
+                                continue;
+                            _logManager.Log("Queuing \"{0}\"...", childItem.Name);
+                            using (_logManager.NextLogDepth())
+                                QueueMedia((PlayOnVideo) childItem);
+                            break;
+                    }
                 }
+                if (!foundItem)
+                    _logManager.Log("No matches \"{0}\".", matchPattern);
             }
-            if (!foundItem)
-                _logManager.Log("No matches \"{0}\".", matchPattern);
         }
 
         /// <summary>
@@ -113,7 +124,7 @@ namespace PlayPass.Engine
             else if (!QueueMode)
             {
                 success = true;
-                message = "Video will be queued on next run in Queue Mode.";
+                message = "Pending queue mode.";
             }
             else
             {

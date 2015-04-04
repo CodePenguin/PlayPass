@@ -13,13 +13,21 @@ namespace PlayPass.Engine.Extensions
         }
 
         /// <summary>
-        ///     Writes a log message to all the registered loggers
+        ///     Decrements the current log depth
         /// </summary>
-        public void Log(string message)
+        private void DecrementLogDepth(bool verboseMode)
         {
-            var dateTime = DateTime.Now;
             foreach (var logger in _loggers)
-                logger.Log(dateTime, message);
+                logger.DecrementLogDepth(verboseMode);
+        }
+
+        /// <summary>
+        ///     Increments the current log depth
+        /// </summary>
+        private void IncrementLogDepth(bool verboseMode)
+        {
+            foreach (var logger in _loggers)
+                logger.IncrementLogDepth(verboseMode);
         }
 
         /// <summary>
@@ -27,7 +35,10 @@ namespace PlayPass.Engine.Extensions
         /// </summary>
         public void Log(string message, params object[] args)
         {
-            Log(String.Format(message, args));
+            var dateTime = DateTime.Now;
+            var msg = String.Format(message, args);
+            foreach (var logger in _loggers)
+                logger.Log(dateTime, msg);
         }
 
         /// <summary>
@@ -41,21 +52,42 @@ namespace PlayPass.Engine.Extensions
         }
 
         /// <summary>
-        ///     Writes a verbose log message to all registered loggers
-        /// </summary>
-        public void LogVerbose(string message)
-        {
-            var dateTime = DateTime.Now;
-            foreach (var logger in _loggers)
-                logger.LogVerbose(dateTime, message);
-        }
-
-        /// <summary>
         ///     Writes a formatted verbose log message to all registered loggers
         /// </summary>
         public void LogVerbose(string message, params object[] args)
         {
-            LogVerbose(String.Format(message, args));
+            var dateTime = DateTime.Now;
+            var msg = String.Format(message, args);
+            foreach (var logger in _loggers)
+                logger.LogVerbose(dateTime, msg);
+        }
+
+        public IDisposable NextLogDepth()
+        {
+            return new LogDepthPointer(this, false);
+        }
+
+        public IDisposable NextLogVerboseDepth()
+        {
+            return new LogDepthPointer(this, true);
+        }
+
+        private class LogDepthPointer : IDisposable
+        {
+            private readonly LogManager _logManager;
+            private readonly bool _verboseMode;
+
+            public LogDepthPointer(LogManager logManager, bool verboseMode)
+            {
+                _verboseMode = verboseMode;
+                _logManager = logManager;
+                _logManager.IncrementLogDepth(_verboseMode);
+            }
+
+            public void Dispose()
+            {
+                _logManager.DecrementLogDepth(_verboseMode);
+            }
         }
     }
 }
