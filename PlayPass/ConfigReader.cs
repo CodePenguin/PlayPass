@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Xml;
 using PlayPass.Engine;
+using PlayPass.Engine.Extensions;
 using PlaySharp;
 
 namespace PlayPass

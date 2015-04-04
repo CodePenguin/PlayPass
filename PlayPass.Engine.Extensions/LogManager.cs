@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using PlayPass.Engine;
 
-namespace PlayPass
+namespace PlayPass.Engine.Extensions
 {
-    internal class LogManager : ILogManager
+    public class LogManager : ILogManager
     {
         private readonly List<ILogger> _loggers = new List<ILogger>();
 

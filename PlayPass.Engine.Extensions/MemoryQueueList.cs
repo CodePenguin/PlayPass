@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using PlayPass.Engine;
 using PlaySharp;
 
-namespace PlayPass
+namespace PlayPass.Engine.Extensions
 {
-    internal class MemoryQueueList : IQueueList
+    public class MemoryQueueList : IQueueList
     {
         private readonly List<string> _list = new List<string>();
 

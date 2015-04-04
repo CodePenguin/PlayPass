@@ -2,15 +2,14 @@
 using System.Data.Common;
 using System.IO;
 using System.Text.RegularExpressions;
-using PlayPass.Engine;
 using PlaySharp;
 
-namespace PlayPass
+namespace PlayPass.Engine.Extensions
 {
     /// <summary>
     ///     A class that keeps track of previously queued media so it is not continually downloaded.
     /// </summary>
-    internal class FileQueueList : IQueueList
+    public class FileQueueList : IQueueList
     {
         private string _skipFilePath;
 

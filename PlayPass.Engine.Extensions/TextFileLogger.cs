@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Data.Common;
 using System.IO;
-using PlayPass.Engine;
 
-namespace PlayPass
+namespace PlayPass.Engine.Extensions
 {
-    internal class TextFileLogger : ILogger
+    public class TextFileLogger : ILogger
     {
         private StreamWriter _file;
         public bool VerboseMode { get; set; }

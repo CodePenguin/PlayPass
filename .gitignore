@@ -4,5 +4,7 @@ PlayPass/bin
 PlayPass/obj
 PlayPass.Engine/bin
 PlayPass.Engine/obj
+PlayPass.Engine.Extensions/bin
+PlayPass.Engine.Extensions/obj
 PlaySharp/bin
 PlaySharp/obj

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using PlayPass.Engine;
 
-namespace PlayPass
+namespace PlayPass.Engine.Extensions
 {
-    internal static class LoggerFactory
+    public static class LoggerFactory
     {
         private static readonly Dictionary<string, Type> Classes = new Dictionary<string, Type>();
 

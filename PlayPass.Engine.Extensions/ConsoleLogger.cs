@@ -1,9 +1,8 @@
 ﻿using System;
-using PlayPass.Engine;
 
-namespace PlayPass
+namespace PlayPass.Engine.Extensions
 {
-    internal class ConsoleLogger : ILogger
+    public class ConsoleLogger : ILogger
     {
         public bool VerboseMode { get; set; }
 
