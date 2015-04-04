@@ -64,7 +64,7 @@ namespace PlaySharp
         ///     Returns a fully qualified URL from a relative PlayOn URL.
         /// </summary>
         /// <param name="relativeUrl">A relative PlayOn URL.</param>
-        public string GetFullUrl(string relativeUrl)
+        private string GetFullUrl(string relativeUrl)
         {
             return String.Format("http://{0}:{1}/{2}", ServerHost, ServerPort, relativeUrl.TrimStart('/'));
         }
@@ -72,7 +72,7 @@ namespace PlaySharp
         /// <summary>
         ///     Returns a PlayOnItem based on the data in an XmlNode.
         /// </summary>
-        public PlayOnItem GetItem(XmlNode node)
+        private PlayOnItem GetItem(XmlNode node)
         {
             var nodeType = Util.GetNodeAttributeValue(node, "type");
             PlayOnItem newItem;
@@ -92,7 +92,7 @@ namespace PlaySharp
         ///     Returns a PlayOnItem based on the data from a URL.
         /// </summary>
         /// <param name="url">A relative PlayOn URL.</param>
-        public PlayOnItem GetItem(string url)
+        private PlayOnItem GetItem(string url)
         {
             var doc = XmlRequest(url);
             return GetItem(doc.ChildNodes[0]);
@@ -101,7 +101,7 @@ namespace PlaySharp
         /// <summary>
         ///     Creates PlayOnItems based on the data in the children of an XmlNode and adds them to a list.
         /// </summary>
-        public void GetItems(XmlNode node, List<PlayOnItem> list)
+        private void GetItems(XmlNode node, List<PlayOnItem> list)
         {
             var groupNodes = node.SelectNodes("group");
             if (groupNodes == null)
@@ -151,7 +151,7 @@ namespace PlaySharp
         ///     Returns an XmlDocument from a URL.
         /// </summary>
         /// <param name="url">A relative PlayOn URL.</param>
-        public XmlDocument XmlRequest(string url)
+        private XmlDocument XmlRequest(string url)
         {
             var xmlDoc = new XmlDocument();
             var stream = new MemoryStream(_webClient.DownloadData(GetFullUrl(url)));

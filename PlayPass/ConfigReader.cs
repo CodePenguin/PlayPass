@@ -8,7 +8,7 @@ namespace PlayPass
 {
     internal class ConfigReader
     {
-        public IList<ILogger> Loggers;
+        public readonly IList<ILogger> Loggers;
 
         public ConfigReader(string fileName)
         {
@@ -50,7 +50,7 @@ namespace PlayPass
                 if (Util.GetNodeAttributeValue(loggerNode, "enabled", "1") != "1")
                     continue;
                 var verboseMode = (Util.GetNodeAttributeValue(loggerNode, "verbose", "0") == "1");
-                var connectionString = Util.GetNodeAttributeValue(loggerNode, "settings", "");
+                var connectionString = Util.GetNodeAttributeValue(loggerNode, "settings");
                 var instance = LoggerFactory.GetLogger(connectionString, verboseMode);
                 Loggers.Add(instance);
             }

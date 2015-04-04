@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Xml;
 
 namespace PlaySharp
 {
@@ -31,13 +30,5 @@ namespace PlaySharp
             }
         }
 
-        /// <summary>
-        ///     Loads the child items from an XmlNode and stores them in the Items property.
-        /// </summary>
-        protected virtual void LoadItemsFromNode(XmlNode node)
-        {
-            _items = new List<PlayOnItem>();
-            PlayOn.GetItems(node, _items);
-        }
     }
 }

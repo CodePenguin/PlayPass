@@ -7,7 +7,7 @@ namespace PlaySharp
     /// </summary>
     public class PlayOnItem
     {
-        protected PlayOn PlayOn;
+        protected readonly PlayOn PlayOn;
 
         protected PlayOnItem(PlayOn playOn)
         {
