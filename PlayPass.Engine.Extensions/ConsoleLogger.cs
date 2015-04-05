@@ -8,7 +8,7 @@ namespace PlayPass.Engine.Extensions
     public class ConsoleLogger : ILogger
     {
         private int _logDepth;
-        public bool VerboseMode { get; set; }
+        public bool VerboseMode { private get; set; }
 
         public void DecrementLogDepth(bool verboseMode)
         {

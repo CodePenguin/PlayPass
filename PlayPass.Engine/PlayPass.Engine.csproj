@@ -37,6 +37,7 @@
     <Compile Include="ILogger.cs" />
     <Compile Include="ILogManager.cs" />
     <Compile Include="IQueueList.cs" />
+    <Compile Include="IQueueValidator.cs" />
     <Compile Include="PassAction.cs" />
     <Compile Include="PassItem.cs" />
     <Compile Include="PlayPassProcessor.cs" />

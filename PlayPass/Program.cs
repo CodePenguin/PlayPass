@@ -33,9 +33,12 @@ namespace PlayPass
                 var playOn = config.GetPlayOn();
                 logManager.LogVerbose("Connecting to {0}:{1}...", playOn.ServerHost, playOn.ServerPort);
 
-                // Initialize PlayPassProcessor
+                // Initialize QueueValidator
                 var queueList = config.GetQueueList();
-                var playPass = new PlayPassProcessor(playOn, logManager, queueList)
+                var queueValidator = config.GetQueueValidator(queueList);
+
+                // Initialize PlayPassProcessor
+                var playPass = new PlayPassProcessor(playOn, logManager, queueValidator)
                 {
                     QueueMode = commandLine.QueueMode,
                     SkipMode = commandLine.SkipMode

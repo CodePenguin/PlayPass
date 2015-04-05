@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
-using PlayPass.Engine;
-using PlayPass.Engine.Extensions;
 using PlaySharp;
 
-namespace PlayPass
+namespace PlayPass.Engine.Extensions
 {
     /// <summary>
     ///     A class that reads the config file
     /// </summary>
-    internal class ConfigReader
+    public class ConfigReader
     {
         private readonly XmlDocument _config = new XmlDocument();
 
@@ -78,6 +76,14 @@ namespace PlayPass
             var serverHost = Util.GetNodeAttributeValue(playonNode, "host",  PlayOnConstants.DefaultHost);
             var serverPort = int.Parse(Util.GetNodeAttributeValue(playonNode, "port", PlayOnConstants.DefaultPort.ToString()));            
             return new PlayOn(serverHost, serverPort);
+        }
+
+        public IQueueValidator GetQueueValidator(IQueueList queueList)
+        {
+            var limitsNode = _config.SelectSingleNode("playpass/settings/limits");
+            var queueDurationLimit = TimeSpan.Parse(Util.GetNodeAttributeValue(limitsNode, "queue_duration", "00:00:00"));
+            var queueCountLimit = int.Parse(Util.GetNodeAttributeValue(limitsNode, "queue_count", "0"));
+            return new QueueValidator(queueList) { QueueDurationLimit = queueDurationLimit, QueueCountLimit = queueCountLimit };
         }
 
         private static PassActionType StringToPassItemType(string type)

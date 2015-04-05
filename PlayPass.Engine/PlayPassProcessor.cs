@@ -10,15 +10,15 @@ namespace PlayPass.Engine
     {
         private readonly ILogManager _logManager;
         private readonly PlayOn _playOn;
-        private readonly IQueueList _queueList;
+        private readonly IQueueValidator _queueValidator;
         public bool QueueMode;
         public bool SkipMode;
 
-        public PlayPassProcessor(PlayOn playOn, ILogManager logManager, IQueueList queueList)
+        public PlayPassProcessor(PlayOn playOn, ILogManager logManager, IQueueValidator queueValidator)
         {
             _playOn = playOn;
             _logManager = logManager;
-            _queueList = queueList;
+            _queueValidator = queueValidator;
         }
 
         /// <summary>
@@ -113,38 +113,40 @@ namespace PlayPass.Engine
         /// <summary>
         ///     Checks to see if the item has already been recorded.  If not, it will queue the video for recording in PlayLater.
         /// </summary>
-        private void QueueMedia(PlayOnVideo item)
+        private void QueueMedia(PlayOnVideo media)
         {
             var success = false;
-            var message = "";
-            if (_queueList.MediaInList(item))
-                message = "Already recorded or skipped.";
-            else if (SkipMode)
+            string message;
+            if (SkipMode)
             {
                 message = "Manually skipped.";
-                _queueList.AddMediaToList(item);
+                _queueValidator.AddMediaToQueueList(media);
             }
-            else if (!QueueMode)
+            else if (_queueValidator.CanQueueMedia(media, out message))
             {
-                success = true;
-                message = "Pending queue mode.";
-            }
-            else
-            {
-                try
+                if (!QueueMode)
                 {
-                    var queueResult = _playOn.QueueMedia(item);
-                    if (queueResult == PlayOnConstants.QueueVideoResult.PlayLaterNotFound)
-                        message = "PlayLater queue link not found. PlayLater may not be running.";
-                    else if (queueResult == PlayOnConstants.QueueVideoResult.AlreadyInQueue)
-                        message = "Already queued.";
-                    success = (queueResult == PlayOnConstants.QueueVideoResult.Success);
-                    if (success)
-                        _queueList.AddMediaToList(item);
+                    success = true;
+                    message = "Pending queue mode.";
+                    _queueValidator.AddMediaToCounts(media);
                 }
-                catch (Exception ex)
+                else
                 {
-                    message = ex.Message;
+                    try
+                    {
+                        var queueResult = _playOn.QueueMedia(media);
+                        if (queueResult == PlayOnConstants.QueueVideoResult.PlayLaterNotFound)
+                            message = "PlayLater queue link not found. PlayLater may not be running.";
+                        else if (queueResult == PlayOnConstants.QueueVideoResult.AlreadyInQueue)
+                            message = "Already queued.";
+                        success = (queueResult == PlayOnConstants.QueueVideoResult.Success);
+                        if (success)
+                            _queueValidator.AddMediaToQueueList(media);
+                    }
+                    catch (Exception ex)
+                    {
+                        message = ex.Message;
+                    }
                 }
             }
             _logManager.Log("{0}{1}", (success ? "Queued" : "Skipped"), (message == "" ? "" : ": " + message));
