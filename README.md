@@ -7,32 +7,55 @@ What is it?
 
 For those who want a solution right now there is PlayPass. PlayPass is an unofficial way of automatically queuing new content.  It uses the same technology that the PlayLater mobile apps use to queue the content so it does not require any modification of PlayLater.
 
-Components
---------------------------------
-####PlayPass 
-A console program written in C# that will automatically queue items for download based on user preferences in an XML config file.
-
-####PlaySharp
-A .NET 2.0 Assembly written in C# that handles all the communication between PlayPass and the PlayOn/PlayLater server.  It abstracts the PlayOn Server data protocols into easy to consume .NET native objects.  This could be used to create other kinds of interfaces.
-
 Download the latest release
 --------------------------------
 All releases of PlayPass are available for download at [https://github.com/CodePenguin/PlayPass/releases](https://github.com/CodePenguin/PlayPass/releases).
 
-How to use it
+How it works
 --------------------------------
-You can compile from source or grab the latest release files and start from there.  Check out the [Wiki](https://github.com/CodePenguin/PlayPass/wiki) for examples for various services and other advanced settings.
+PlayPass works with PlayLater just like you would.  It needs to know what PlayOn folders to open and what videos to queue for recording.
 
-Make a copy of the PlayPass.example.cfg and modify it to your liking.  The following is an example of a config file that will automatically queue up anything in your Hulu Queue.
+#### PlayLater Example
+Let's say you want to queue up the latest episodes for your favorite TV show titled "Random TV Show" on the "Random TV Network".  In PlayLater you would click on the following items sequentially:
+
+- Random TV Network
+- All Current Shows
+- Random TV Show
+- Season 1
+- Episode 1 - Awesome title!
+
+You would have repeat this for every season and every episode individually.  That can take a long time and you'd constantly have to come back and check if the new episodes have been posted.  Once you started watching additional TV shows, this starts to get very tedious. 
+
+#### PlayPass Example
+
+Now let's use PlayPass to remove the tedius parts so we can get back to watching.  Think of a PlayPass `pass` as a season pass for TV shows or movies.  A `pass` consists of two types of actions:
+
+- `scan`: Looks through the current PlayOn folder looking for any **folders** that match what you would have clicked.
+- `queue`: Looks through the current PlayOn folder looking for any **videos** that match what you would have clicked.
+
+Everytime PlayPass is run in `queue` mode it will go through all the defined `passes`, `scan` for the specific folders you would have clicked manually, then tries to `queue` any videos it finds.
+
+Based on our previous example PlayPass needs to do the following:
+
+- `scan` for "Random TV Network"
+- `scan` for "All Current Shows"
+- `scan` for "Random TV Show"
+- `scan` for "Season *"
+- `queue` for "*"
+
+So instead of telling it which season you would click on, we used a wild card (PlayPass supports * as a wildcard to match zero or many characters or ? to match one character.) to tell it to click on ALL seasons! And then instead of telling it a single episode to queue, we use a wild card again to tell it to queue ALL videos.  Thats it!  Every time PlayPass is run, it will automatically check for all the new episodes and start queueing them up for recording.
+
+PlayPass uses XML config files to define the `passes` like we just described.  Lets's look at the PlayPass config file for the above example:
 
 	<playpass>
-		<settings />
 		<passes>
-			<pass enabled="1" description="Hulu Queue">
-				<scan name="Hulu">
-					<scan name="Your Queue">
-						<scan name="Sort By Date">
-							<queue name="*" />
+			<pass description="Random TV Shows">
+				<scan name="Random TV Network">
+					<scan name="All Current Shows">
+						<scan name="Random, TV Show">
+							<scan name="*">
+								<queue name="*" />
+							</scan>
 						</scan>
 					</scan>
 				</scan>
@@ -40,11 +63,34 @@ Make a copy of the PlayPass.example.cfg and modify it to your liking.  The follo
 		</passes>
 	</playpass>
 
-You can add as many "passes" nodes as you'd like.  You can even disable one by changing the "enabled" property to "0".  `scan` nodes will progress through the PlayOn items looking for an item that matches the supplied name.  The `name` can use * as a wildcard to match zero to many characters or ? to match one character.
+Each time PlayPass sees a `scan` node in the XML it will look at the `name` property and try to find any folders in the current PlayOn folder that match. The XML layout makes it kind of look like a folder tree.  In your config file you can add as many "pass" nodes as you'd like to the `passes` section.  All `pass` nodes can have as many `scan` and `queue` nodes as needed and they can be nested down as far as you need to go.
 
-You can add as many `queue` nodes as you'd like which will queue any videos in the current position in the PlayOn items that matches the included pattern.  The `name` argument can also use wildcards like the `scan` nodes.
+#### More powerful PlayLater Example
 
-The `scan` and `queue` nodes are nested inside each other to simulate the folder system that PlayOn uses.  `scan` and `queue` nodes will process all matching items in the current PlayOn folder.
+PlayPass is pretty powerful.  You can do more in a single `pass` than just download one show.  What if you wanted to download all the movies and TV Shows in your "My Things To Watch" folder on the "Random TV Network"?  It would be really annoying if you had to tell it the name of every movie or every TV show you would ever add to the queue.  PlayPass has us covered!
+
+	<playpass>
+		<pass enabled="1" description="Random TV Network Shows">
+			<scan name="Random TV Network">
+				<scan name="My Things to Watch">
+					<queue name="*" />
+					<scan name="*">
+						<queue name="*" />
+						<scan name="Season *">
+							<queue name="*" />
+						</scan>
+					</scan>
+				</scan>
+			</scan>
+		</pass>
+	</playpass>
+
+
+Check out the [Wiki](https://github.com/CodePenguin/PlayPass/wiki) for more examples of various services and other advanced settings.
+
+How to use it
+--------------------------------
+You can compile from source or grab the latest release files and start from there.  You can modify the included `PlayPass.cfg` file or create your own.  If you don't specify which config file to use, PlayPass will just use `PlayPass.cfg`.
 
 ####Queue Mode
 To test what would be queued just execute PlayPass.exe with the filename of your config file:
@@ -75,11 +121,6 @@ Skip Mode creates a special filename.playpass.skip file for each file that would
 
 ####Scheduling
 You can use Window's built in Task Scheduler program to execute PlayPass whenever you want.  I've got mine going off every day at midnight.  This way you are in control of when items are queued for downloading.
-
-
-How to build it
---------------------------------
-Open the PlayPass.sln file in Visual Studios (Only Visual Studios 2013 has been tested but earlier versions should work also) and select "Build Solution" from the "Build" menu.
 
 License
 --------------------------------
