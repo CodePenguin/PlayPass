@@ -23,7 +23,7 @@ namespace PlayPass.Engine.Extensions
         public void AddMediaToCounts(PlayOnVideo media)
         {
             _queuedCount++;
-            _queuedDuration = _queuedDuration.Add(media.RunTime);            
+            _queuedDuration = _queuedDuration.Add(RunTimeToTimeSpan(media.RunTime));            
         }
 
         public void AddMediaToQueueList(PlayOnVideo media)
@@ -39,7 +39,7 @@ namespace PlayPass.Engine.Extensions
                 message = "Already recorded or skipped.";
             else if (QueueCountLimit > 0 && QueueCountLimit <= _queuedCount)
                 message = "Queue limit reached.";
-            else if (QueueDurationLimit.Ticks > 0 && QueueDurationLimit <= _queuedDuration.Add(media.RunTime))
+            else if (QueueDurationLimit.Ticks > 0 && QueueDurationLimit <= _queuedDuration.Add(RunTimeToTimeSpan(media.RunTime)))
                 message = "Queue duration limit reached.";
             else
             {
@@ -47,6 +47,14 @@ namespace PlayPass.Engine.Extensions
                 retValue = true;
             }
             return retValue;
+        }
+
+        private static TimeSpan RunTimeToTimeSpan(string runTime)
+        {
+            TimeSpan result;
+            if (!TimeSpan.TryParse(runTime, out result))
+                result = new TimeSpan(5, 0, 0);
+            return result;
         }
     }
 }

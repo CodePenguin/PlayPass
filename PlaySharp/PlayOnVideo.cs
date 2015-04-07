@@ -16,7 +16,7 @@ namespace PlaySharp
         private string _mediaUrl;
         private string _playLaterName;
         private string _playLaterUrl;
-        private TimeSpan _runTime;
+        private string _runTime;
         private string _series;
 
         public PlayOnVideo(PlayOn api)
@@ -112,7 +112,7 @@ namespace PlaySharp
         /// <summary>
         ///     The runtime of this video item.
         /// </summary>
-        public TimeSpan RunTime
+        public string RunTime
         {
             get
             {
@@ -147,7 +147,7 @@ namespace PlaySharp
             _mediaUrl = Util.GetChildNodeAttributeValue(node, "media", "src");
             _playLaterName = Util.GetChildNodeAttributeValue(node, "media_playlater", "name");
             _playLaterUrl = Util.GetChildNodeAttributeValue(node, "media_playlater", "src");
-            _runTime = TimeSpan.Parse(Util.GetChildNodeAttributeValue(node, "time", "name"));
+            _runTime = Util.GetChildNodeAttributeValue(node, "time", "name");
             _series = Util.GetChildNodeAttributeValue(node, "series", "name");
         }
 
