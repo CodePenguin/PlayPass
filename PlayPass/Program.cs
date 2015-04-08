@@ -33,6 +33,9 @@ namespace PlayPass
                 var playOn = config.GetPlayOn();
                 logManager.LogVerbose("Connecting to {0}:{1}...", playOn.ServerHost, playOn.ServerPort);
 
+                // Hook into XmlRequestEvent for debug logging
+                playOn.XmlRequestEvent += logManager.XmlRequestEventHandler;
+
                 // Initialize QueueValidator
                 var queueList = config.GetQueueList();
                 var queueValidator = config.GetQueueValidator(queueList);

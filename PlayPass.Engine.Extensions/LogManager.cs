@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using PlaySharp;
 
 namespace PlayPass.Engine.Extensions
 {
@@ -42,6 +43,17 @@ namespace PlayPass.Engine.Extensions
             var msg = String.Format(message, args);
             foreach (var logger in _loggers)
                 logger.Log(dateTime, msg);
+        }
+
+        /// <summary>
+        ///     Logs a debug message to all registered loggers
+        /// </summary>
+        public void LogDebug(string message, params object[] args)
+        {
+            var dateTime = DateTime.Now;
+            var msg = String.Format(message, args);
+            foreach (var logger in _loggers)
+                logger.LogDebug(dateTime, msg);            
         }
 
         /// <summary>
@@ -91,6 +103,11 @@ namespace PlayPass.Engine.Extensions
             {
                 _logManager.DecrementLogDepth(_verboseMode);
             }
+        }
+
+        public void XmlRequestEventHandler(object sender, XmlRequestEventArgs e)
+        {
+            LogDebug("Xml Request [{0}]: {1}", e.RequestUrl, e.Xml.OuterXml);
         }
     }
 }

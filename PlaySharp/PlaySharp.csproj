@@ -37,6 +37,7 @@
     <Compile Include="PlayOn.cs" />
     <Compile Include="PlayOnCatalog.cs" />
     <Compile Include="PlayOnConstants.cs" />
+    <Compile Include="PlayOnEvents.cs" />
     <Compile Include="PlayOnFolder.cs" />
     <Compile Include="PlayOnItem.cs" />
     <Compile Include="PlayOnSettings.cs" />

@@ -11,6 +11,7 @@ namespace PlayPass.Engine.Extensions
     {
         private StreamWriter _file;
         private int _logDepth;
+        public bool DebugMode { private get; set; }
         public bool VerboseMode { private get; set; }
 
         public void DecrementLogDepth(bool verboseMode)
@@ -38,6 +39,12 @@ namespace PlayPass.Engine.Extensions
         public void Log(DateTime dateTime, string msg)
         {
             _file.WriteLine("{0}:{1}{2}", dateTime.ToString("u"), Padding(), msg);
+        }
+
+        public void LogDebug(DateTime dateTime, string msg)
+        {
+            if (DebugMode)
+                Log(dateTime, msg);
         }
 
         public void LogException(DateTime dateTime, Exception exception)

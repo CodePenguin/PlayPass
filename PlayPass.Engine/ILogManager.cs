@@ -23,6 +23,11 @@ namespace PlayPass.Engine
         void Log(string message, params object[] args);
 
         /// <summary>
+        ///     Logs a debug message to all registered loggers
+        /// </summary>
+        void LogDebug(string message, params object[] args);
+
+        /// <summary>
         ///     Logs an exception to all registered loggers
         /// </summary>
         void LogException(Exception exception);

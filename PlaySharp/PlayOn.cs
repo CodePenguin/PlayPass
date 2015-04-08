@@ -13,6 +13,8 @@ namespace PlaySharp
     {
         private readonly WebClient _webClient;
 
+        public event XmlRequestEventHandler XmlRequestEvent;
+
         /// <summary>
         ///     Initializes a PlayOn object for the local machine and default port.
         /// </summary>
@@ -57,7 +59,7 @@ namespace PlaySharp
         /// </summary>
         public PlayOnCatalog GetCatalog()
         {
-            return (PlayOnCatalog) GetItem(PlayOnConstants.DefaultUrl);
+            return (PlayOnCatalog)GetItem(PlayOnConstants.DefaultUrl);
         }
 
         /// <summary>
@@ -156,6 +158,10 @@ namespace PlaySharp
             var xmlDoc = new XmlDocument();
             var stream = new MemoryStream(_webClient.DownloadData(GetFullUrl(url)));
             xmlDoc.Load(stream);
+
+            if (XmlRequestEvent != null)
+                XmlRequestEvent(this, new XmlRequestEventArgs() { RequestUrl = url, Xml = xmlDoc });
+
             return xmlDoc;
         }
     }

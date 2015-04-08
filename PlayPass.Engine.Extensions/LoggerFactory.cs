@@ -11,7 +11,7 @@ namespace PlayPass.Engine.Extensions
     {
         private static readonly Dictionary<string, Type> Classes = new Dictionary<string, Type>();
 
-        public static ILogger GetLogger(string connectionString, bool verboseMode)
+        public static ILogger GetLogger(string connectionString, bool debugMode, bool verboseMode)
         {
             var parser = new DbConnectionStringBuilder {ConnectionString = connectionString};
             if (!parser.ContainsKey("Provider"))
@@ -24,6 +24,7 @@ namespace PlayPass.Engine.Extensions
 
             var type = Classes[providerType];
             var instance = (ILogger) Activator.CreateInstance(type);
+            instance.DebugMode = debugMode;
             instance.VerboseMode = verboseMode;
             instance.Initialize(connectionString);
             return instance;

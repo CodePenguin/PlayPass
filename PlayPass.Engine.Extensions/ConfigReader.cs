@@ -26,9 +26,10 @@ namespace PlayPass.Engine.Extensions
             {
                 if (Util.GetNodeAttributeValue(loggerNode, "enabled", "1") != "1")
                     continue;
+                var debugMode = (Util.GetNodeAttributeValue(loggerNode, "debug", "0") == "1");
                 var verboseMode = (Util.GetNodeAttributeValue(loggerNode, "verbose", "0") == "1");
                 var connectionString = Util.GetNodeAttributeValue(loggerNode, "settings");
-                var instance = LoggerFactory.GetLogger(connectionString, verboseMode);
+                var instance = LoggerFactory.GetLogger(connectionString, debugMode, verboseMode);
                 loggers.Add(instance);
             }
         }
