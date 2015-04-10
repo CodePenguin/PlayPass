@@ -38,12 +38,20 @@ namespace PlaySharp
         }
 
         /// <summary>
-        ///     Returns true if the string Value matches the string Pattern using * to match multiple characters and ? to match a
-        ///     single character.
+        ///     Returns true if the string Value matches the string Pattern:
+        ///         * matches zero or more characters
+        ///         ? matches a single character
+        ///         | separates alternate patterns
         /// </summary>
         public static bool MatchesPattern(string value, string pattern)
         {
-            return new Regex("(?i)^" + Regex.Escape(pattern).Replace(@"\*", ".*").Replace(@"\?", ".") + "$").IsMatch(value);
+            if (pattern == "")
+                return false;
+            var regExPattern = Regex.Escape(pattern)
+                .Replace(@"\*", ".*") // Multi-char wild card
+                .Replace(@"\?", ".")  // Single-char wild card
+                .Replace(@"\|", "|"); // Match multiple patterns
+            return new Regex("(?i)^" + regExPattern + "$").IsMatch(value);
         }
     }
 }
