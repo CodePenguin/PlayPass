@@ -61,10 +61,12 @@ namespace PlayPass.Engine.Extensions
         {
             foreach (XmlNode actionNode in parentNode.ChildNodes)
             {
-                var action = new PassAction(
-                    Util.GetNodeAttributeValue(actionNode, "name"),
-                    StringToPassItemType(actionNode.Name)
-                    );
+                var action = new PassAction
+                {
+                    Name = Util.GetNodeAttributeValue(actionNode, "name"),
+                    Type = StringToPassItemType(actionNode.Name),
+                    Exclude = Util.GetNodeAttributeValue(actionNode, "exclude")
+                };
                 if (action.Type == PassActionType.Scan)
                     GetPassActions(action.Actions, actionNode);
                 list.Add(action);

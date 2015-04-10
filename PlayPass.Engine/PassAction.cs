@@ -7,15 +7,14 @@ namespace PlayPass.Engine
     /// </summary>
     public class PassAction
     {
-        public PassAction(string name, PassActionType type)
+        public PassAction()
         {
             Actions = new PassActions();
-            Name = name;
-            Type = type;
         }
 
-        public string Name { get; private set; }
-        public PassActionType Type { get; private set; }
+        public string Name { get; set; }
+        public string Exclude { get; set; }
+        public PassActionType Type { get; set; }
         public PassActions Actions { get; private set; }
     }
 

@@ -73,6 +73,7 @@ namespace PlayPass.Engine
         private void ProcessAction(PlayOnItem currentItem, PassAction action)
         {
             var matchPattern = action.Name;
+            var excludePattern = action.Exclude;
             var foundItem = false;
             _logManager.Log("Matching \"{0}\"...", matchPattern);
             using (_logManager.NextLogDepth())
@@ -82,6 +83,11 @@ namespace PlayPass.Engine
                     _logManager.LogVerbose("Checking \"{0}\"...", childItem.Name);
                     if (!Util.MatchesPattern(childItem.Name, matchPattern))
                         continue;
+                    if (Util.MatchesPattern(childItem.Name, excludePattern))
+                    {
+                        _logManager.LogVerbose("Excluded match.");
+                        continue;
+                    }
                     foundItem = true;
                     switch (action.Type)
                     {
