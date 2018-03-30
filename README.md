@@ -60,7 +60,7 @@ PlayPass uses XML config files to define the `passes` like we just described.  L
             <pass description="Random TV Shows">
                 <scan name="Random TV Network">
                     <scan name="All Current Shows">
-                        <scan name="Random, TV Show">
+                        <scan name="Random TV Show">
                             <scan name="*">
                                 <queue name="*" />
                             </scan>
