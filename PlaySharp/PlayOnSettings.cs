@@ -14,7 +14,9 @@ namespace PlaySharp
         public static string GetMediaStorageLocation()
         {
             var reg = Registry.LocalMachine.OpenSubKey(GetPlayOnSettingsRegistryKey());
-            var regValue = reg?.GetValue("myRecordingsPath");
+            if (reg == null)
+                return "";
+            var regValue = reg.GetValue("myRecordingsPath");
             if (regValue == null)
                 return "";
             foreach (var item in regValue.ToString().Split('*'))
