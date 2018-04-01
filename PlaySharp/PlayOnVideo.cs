@@ -19,8 +19,7 @@ namespace PlaySharp
         private string _runTime;
         private string _series;
 
-        public PlayOnVideo(PlayOn api)
-            : base(api)
+        public PlayOnVideo(PlayOn api) : base(api)
         {
             _loadedDetails = false;
         }

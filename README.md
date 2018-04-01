@@ -36,12 +36,13 @@ You would have repeat this for every season and every episode individually.  Tha
 
 ### PlayPass Example
 
-Now let's use PlayPass to remove the tedius parts so we can get back to watching.  Think of a PlayPass `pass` as a season pass for TV shows or movies.  A `pass` consists of two types of actions:
+Now let's use PlayPass to remove the tedius parts so we can get back to watching.  Think of a PlayPass `pass` as a season pass for TV shows or movies.  A `pass` consists of three types of actions:
 
 - `scan`: Looks through the current PlayOn folder looking for any **folders** that match what you would have clicked.
+- `search`: Performs a text search on the current PlayOn folder. (Note: Not all channels/folders support this feature.)
 - `queue`: Looks through the current PlayOn folder looking for any **videos** that match what you would have clicked.
 
-Everytime PlayPass is run in `queue` mode it will go through all the defined `passes`, `scan` for the specific folders you would have clicked manually, then tries to `queue` any videos it finds.
+Everytime PlayPass is run in `queue` mode it will go through all the defined `passes`, `scan` for the specific folders you would have clicked manually or  `search` for text using a folder's search function , then tries to `queue` any videos it finds.
 
 Based on our previous example PlayPass needs to do the following:
 
@@ -93,6 +94,21 @@ PlayPass is pretty powerful.  You can do more in a single `pass` than just downl
         </pass>
     </playpass>
 
+### Search Example
+
+Sometimes you may want to `queue` up any videos that are found using a channel's search function.  If we wanted to search for "Funny Cat Videos" in the "Random TV Network" folder we could do the following:
+
+    <playpass>
+        <pass enabled="1" description="Search for Random Funny Cat Videos">
+            <scan name="Random TV Network">
+                <search name="Funny Cat Videos">
+                    <queue name="*" />
+                </search>
+            </scan>
+        </pass>
+    </playpass>
+
+### Other Examples
 
 Check out the [Wiki](https://github.com/CodePenguin/PlayPass/wiki) for more examples of various services and other advanced settings.
 

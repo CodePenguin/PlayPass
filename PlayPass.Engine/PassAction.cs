@@ -25,6 +25,7 @@ namespace PlayPass.Engine
     public enum PassActionType
     {
         Queue,
-        Scan
+        Scan,
+        Search
     };
 }

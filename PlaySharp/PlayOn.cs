@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Web;
 using System.Xml;
 
 namespace PlaySharp
@@ -78,14 +79,25 @@ namespace PlaySharp
         {
             var nodeType = Util.GetNodeAttributeValue(node, "type");
             PlayOnItem newItem;
-            if (node.Name == "catalog")
-                newItem = new PlayOnCatalog(this);
-            else if (nodeType == "folder")
-                newItem = new PlayOnFolder(this);
-            else if (nodeType == "video")
-                newItem = new PlayOnVideo(this);
-            else
-                throw new Exception(String.Format("Unhandled node type: {0}", nodeType));
+            switch (nodeType)
+            {
+                case "folder":
+                    IList<PlayOnItem> childItems = null;
+                    if (node.HasChildNodes)
+                    {
+                        childItems = new List<PlayOnItem>();
+                        GetItems(node, childItems);
+                    }
+                    newItem = (node.Name == "catalog")
+                        ? new PlayOnCatalog(this, childItems)
+                        : new PlayOnFolder(this, childItems);
+                    break;
+                case "video":
+                    newItem = new PlayOnVideo(this);
+                    break;
+                default:
+                    throw new Exception(String.Format("Unhandled node type: {0}", nodeType));
+            }
             newItem.LoadFromNode(node);
             return newItem;
         }
@@ -103,7 +115,7 @@ namespace PlaySharp
         /// <summary>
         ///     Creates PlayOnItems based on the data in the children of an XmlNode and adds them to a list.
         /// </summary>
-        private void GetItems(XmlNode node, List<PlayOnItem> list)
+        private void GetItems(XmlNode node, IList<PlayOnItem> list)
         {
             var groupNodes = node.SelectNodes("group");
             if (groupNodes == null)
@@ -117,10 +129,22 @@ namespace PlaySharp
         /// </summary>
         /// <param name="url">A relative PlayOn URL.</param>
         /// <param name="list">The list that PlayOnItems will be added to</param>
-        public void GetItems(string url, List<PlayOnItem> list)
+        public void GetItems(string url, IList<PlayOnItem> list)
         {
             var doc = XmlRequest(url);
             GetItems(doc.ChildNodes[0], list);
+        }
+
+        /// <summary>
+        ///     Creates a PlayOnFolder representing the search results for the specified folder and search term.
+        /// </summary>
+        /// <param name="url">A relative PlayOn URL.</param>
+        /// <param name="searchTerm">The text that will be searched for.</param>
+        public PlayOnFolder GetSearchResults(string url, string searchTerm)
+        {
+            var searchCriteria = HttpUtility.UrlEncode("dc:description contains " + searchTerm);
+            var searchUrl = String.Format("{0}&searchterm={1})", url, searchCriteria);
+            return GetItem(searchUrl) as PlayOnFolder;
         }
 
         /// <summary>

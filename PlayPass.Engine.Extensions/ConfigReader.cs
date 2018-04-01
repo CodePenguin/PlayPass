@@ -64,10 +64,10 @@ namespace PlayPass.Engine.Extensions
                 var action = new PassAction
                 {
                     Name = Util.GetNodeAttributeValue(actionNode, "name"),
-                    Type = StringToPassItemType(actionNode.Name),
+                    Type = StringToPassActionType(actionNode.Name),
                     Exclude = Util.GetNodeAttributeValue(actionNode, "exclude")
                 };
-                if (action.Type == PassActionType.Scan)
+                if (PassItemTypeHasActions(action.Type))
                     GetPassActions(action.Actions, actionNode);
                 list.Add(action);
             }
@@ -89,7 +89,12 @@ namespace PlayPass.Engine.Extensions
             return new QueueValidator(queueList) { QueueDurationLimit = queueDurationLimit, QueueCountLimit = queueCountLimit };
         }
 
-        private static PassActionType StringToPassItemType(string type)
+        private static bool PassItemTypeHasActions(PassActionType actionType)
+        {
+            return (actionType == PassActionType.Scan || actionType == PassActionType.Search);
+        }
+
+        private static PassActionType StringToPassActionType(string type)
         {
             switch (type.ToLower())
             {
@@ -97,8 +102,10 @@ namespace PlayPass.Engine.Extensions
                     return PassActionType.Queue;
                 case "scan":
                     return PassActionType.Scan;
+                case "search":
+                    return PassActionType.Search;
                 default:
-                    throw new Exception(String.Format("Invalid PassItemType string: {0}", type));
+                    throw new Exception(String.Format("Invalid PassActionType string: {0}", type));
             }
         }
     }

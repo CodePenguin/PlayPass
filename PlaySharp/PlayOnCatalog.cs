@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Collections.Generic;
+using System.Xml;
 
 namespace PlaySharp
 {
@@ -7,8 +8,7 @@ namespace PlaySharp
     /// </summary>
     public class PlayOnCatalog : PlayOnFolder
     {
-        public PlayOnCatalog(PlayOn api)
-            : base(api)
+        public PlayOnCatalog(PlayOn api, IList<PlayOnItem> items = null) : base(api, items)
         {
         }
 
