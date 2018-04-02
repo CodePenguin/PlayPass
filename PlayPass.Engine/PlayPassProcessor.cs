@@ -58,19 +58,30 @@ namespace PlayPass.Engine
         /// </summary>
         private void ProcessActions(PlayOnItem currentItem, PassActions actions)
         {
-            if (!(currentItem is PlayOnFolder))
-                return;
+            var folder = (currentItem as PlayOnFolder);
+            if (folder == null) return;
             foreach (var action in actions)
             {
                 using (_logManager.NextLogVerboseDepth())
-                    ProcessAction(currentItem, action);
+                {
+                    switch (action.Type)
+                    {
+                        case PassActionType.Search:
+                            ProcessSearchAction(folder, action);
+                            break;
+                        case PassActionType.Queue:
+                        case PassActionType.Scan:
+                            ProcessMatchAction(folder, action);
+                            break;
+                    }
+                }
             }
         }
 
         /// <summary>
-        ///     Processes the current action against the currently selected item
+        ///     Processes a matching action against the items in a folder.
         /// </summary>
-        private void ProcessAction(PlayOnItem currentItem, PassAction action)
+        private void ProcessMatchAction(PlayOnFolder folder, PassAction action)
         {
             var matchPattern = action.Name;
             var excludePattern = action.Exclude;
@@ -78,7 +89,7 @@ namespace PlayPass.Engine
             _logManager.Log("Matching \"{0}\"...", matchPattern);
             using (_logManager.NextLogDepth())
             {
-                foreach (var childItem in ((PlayOnFolder) currentItem).Items)
+                foreach (var childItem in folder.Items)
                 {
                     _logManager.LogVerbose("Checking \"{0}\"...", childItem.Name);
                     if (!Util.MatchesPattern(childItem.Name, matchPattern))
@@ -93,7 +104,10 @@ namespace PlayPass.Engine
                     {
                         case PassActionType.Scan:
                             if (!(childItem is PlayOnFolder))
-                                continue;
+                            {
+                                _logManager.LogVerbose("\"{0}\" is not a folder.", childItem.Name);
+                                return;
+                            }
                             using (_logManager.NextLogVerboseDepth())
                             {
                                 _logManager.LogVerbose("Entering \"{0}\"", childItem.Name);
@@ -104,7 +118,10 @@ namespace PlayPass.Engine
 
                         case PassActionType.Queue:
                             if (!(childItem is PlayOnVideo))
-                                continue;
+                            {
+                                _logManager.LogVerbose("\"{0}\" is not a video.", childItem.Name);
+                                return;
+                            }
                             _logManager.Log("Queuing \"{0}\"...", childItem.Name);
                             using (_logManager.NextLogDepth())
                                 QueueMedia((PlayOnVideo) childItem);
@@ -112,7 +129,31 @@ namespace PlayPass.Engine
                     }
                 }
                 if (!foundItem)
-                    _logManager.Log("No matches \"{0}\".", matchPattern);
+                    _logManager.Log("No matches for \"{0}\".", matchPattern);
+            }
+        }
+
+        /// <summary>
+        ///     Processes a search action against a folder.
+        /// </summary>
+        private void ProcessSearchAction(PlayOnFolder folder, PassAction action)
+        {
+            if (!folder.Searchable)
+            {
+                _logManager.Log("\"{0}\" is not searchable.", folder.Name);
+                return;
+            }
+            var searchTerm = action.Name;
+            _logManager.Log("Searching for \"{0}\"...", searchTerm);
+            using (_logManager.NextLogDepth())
+            {
+                var searchResults = folder.Search(searchTerm);
+                if (searchResults.Items.Count == 0)
+                {
+                    _logManager.Log("No matches for \"{0}\".", searchTerm);
+                    return;
+                }
+                ProcessActions(searchResults, action.Actions);
             }
         }
 

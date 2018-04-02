@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Xml;
 
 namespace PlaySharp
 {
@@ -7,17 +8,17 @@ namespace PlaySharp
     /// </summary>
     public class PlayOnFolder : PlayOnItem
     {
-        private List<PlayOnItem> _items;
+        private IList<PlayOnItem> _items;
 
-        public PlayOnFolder(PlayOn api)
-            : base(api)
+        public PlayOnFolder(PlayOn api, IList<PlayOnItem> items = null) : base(api)
         {
+            _items = items;
         }
 
         /// <summary>
         ///     A list containing all child PlayOn items associated with this item.
         /// </summary>
-        public IEnumerable<PlayOnItem> Items
+        public IList<PlayOnItem> Items
         {
             get
             {
@@ -28,6 +29,25 @@ namespace PlaySharp
                 }
                 return _items;
             }
+        }
+
+        /// <summary>
+        ///     Indicates if the folder is searchable.
+        /// </summary>
+        public bool Searchable { get; private set; }
+
+        public override void LoadFromNode(XmlNode node)
+        {
+            base.LoadFromNode(node);
+            Searchable = Util.GetNodeAttributeValue(node, "searchable") == "true";
+        }
+
+        /// <summary>
+        ///     Returns a PlayOnSearch object based on the current folder and search term.
+        /// </summary>
+        public PlayOnFolder Search(string searchTerm)
+        {
+            return PlayOn.GetSearchResults(this.Url, searchTerm);
         }
 
     }
