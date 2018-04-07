@@ -35,6 +35,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IPlayOn.cs" />
     <Compile Include="PlayOn.cs" />
     <Compile Include="PlayOnCatalog.cs" />
     <Compile Include="PlayOnConstants.cs" />

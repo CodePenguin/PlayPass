@@ -9,6 +9,8 @@ namespace PlayPass.Engine
     {
         public PassAction()
         {
+            Name = "";
+            Exclude = "";
             Actions = new PassActions();
         }
 

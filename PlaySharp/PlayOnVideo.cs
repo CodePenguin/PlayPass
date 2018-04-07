@@ -1,5 +1,4 @@
-﻿using System;
-using System.Xml;
+﻿using System.Xml;
 
 namespace PlaySharp
 {
@@ -19,7 +18,7 @@ namespace PlaySharp
         private string _runTime;
         private string _series;
 
-        public PlayOnVideo(PlayOn api) : base(api)
+        public PlayOnVideo(IPlayOn api) : base(api)
         {
             _loadedDetails = false;
         }

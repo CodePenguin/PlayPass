@@ -8,19 +8,23 @@ namespace PlaySharp
     /// </summary>
     public class PlayOnCatalog : PlayOnFolder
     {
-        public PlayOnCatalog(PlayOn api, IList<PlayOnItem> items = null) : base(api, items)
+        public PlayOnCatalog(IPlayOn api) : base(api)
+        {
+        }
+
+        public PlayOnCatalog(IPlayOn api, IList<PlayOnItem> items) : base(api, items)
         {
         }
 
         /// <summary>
         ///     The API version string of the connected PlayOn server.
         /// </summary>
-        public string ApiVersion { get; private set; }
+        public string ApiVersion { get; set; }
 
         /// <summary>
         ///     The version string of the connected PlayOn server.
         /// </summary>
-        public string ServerVersion { get; private set; }
+        public string ServerVersion { get; set; }
 
         public override void LoadFromNode(XmlNode node)
         {

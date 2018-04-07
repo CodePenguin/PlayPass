@@ -10,7 +10,11 @@ namespace PlaySharp
     {
         private IList<PlayOnItem> _items;
 
-        public PlayOnFolder(PlayOn api, IList<PlayOnItem> items = null) : base(api)
+        public PlayOnFolder(IPlayOn api) : base(api)
+        {
+        }
+
+        public PlayOnFolder(IPlayOn api, IList<PlayOnItem> items) : base(api)
         {
             _items = items;
         }

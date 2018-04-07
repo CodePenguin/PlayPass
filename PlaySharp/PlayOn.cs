@@ -10,7 +10,7 @@ namespace PlaySharp
     /// <summary>
     ///     A class representing a connection to a PlayOn server.
     /// </summary>
-    public class PlayOn
+    public class PlayOn : IPlayOn
     {
         private readonly WebClient _webClient;
 
@@ -30,8 +30,7 @@ namespace PlaySharp
         /// <summary>
         ///     Initializes a PlayOn object for a specific server and port.
         /// </summary>
-        public PlayOn(string host, int port)
-            : this()
+        public PlayOn(string host, int port) : this()
         {
             ServerHost = host;
             ServerPort = port;
@@ -88,6 +87,7 @@ namespace PlaySharp
                         childItems = new List<PlayOnItem>();
                         GetItems(node, childItems);
                     }
+
                     newItem = (node.Name == "catalog")
                         ? new PlayOnCatalog(this, childItems)
                         : new PlayOnFolder(this, childItems);

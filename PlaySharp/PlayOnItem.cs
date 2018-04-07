@@ -7,9 +7,9 @@ namespace PlaySharp
     /// </summary>
     public class PlayOnItem
     {
-        protected readonly PlayOn PlayOn;
+        protected readonly IPlayOn PlayOn;
 
-        protected PlayOnItem(PlayOn playOn)
+        protected PlayOnItem(IPlayOn playOn)
         {
             PlayOn = playOn;
         }
@@ -17,17 +17,17 @@ namespace PlaySharp
         /// <summary>
         ///     A relative PlayOn URL for a small image of the item.
         /// </summary>
-        public string ArtUrl { get; private set; }
+        public string ArtUrl { get; set; }
 
         /// <summary>
         ///     The display name of the PlayOn item.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         /// <summary>
         ///     A relative PlayOn URL for the details of this item.
         /// </summary>
-        public string Url { get; private set; }
+        public string Url { get; set; }
 
         public virtual void LoadFromNode(XmlNode node)
         {

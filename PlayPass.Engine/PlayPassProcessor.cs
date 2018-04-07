@@ -9,12 +9,12 @@ namespace PlayPass.Engine
     public class PlayPassProcessor
     {
         private readonly ILogManager _logManager;
-        private readonly PlayOn _playOn;
+        private readonly IPlayOn _playOn;
         private readonly IQueueValidator _queueValidator;
         public bool QueueMode;
         public bool SkipMode;
 
-        public PlayPassProcessor(PlayOn playOn, ILogManager logManager, IQueueValidator queueValidator)
+        public PlayPassProcessor(IPlayOn playOn, ILogManager logManager, IQueueValidator queueValidator)
         {
             _playOn = playOn;
             _logManager = logManager;
