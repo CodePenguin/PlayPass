@@ -17,38 +17,150 @@ namespace PlayPass.Engine.Test
         public void Setup()
         {
             _logManager = new Mock<ILogManager>();
-            _queueValidator = new Mock<IQueueValidator>();
-            string message;
-            _queueValidator.Setup(v => v.CanQueueMedia(It.IsAny<PlayOnVideo>(), out message)).Returns(true);
+            _queueValidator = Mocks.GetQueueValidator();
             _playOn = Mocks.GetPlayOn();
 
-            _processor = new PlayPassProcessor(_playOn.Object, _logManager.Object, _queueValidator.Object)
-            {
-                QueueMode = true
-            };
+            _processor = new PlayPassProcessor(_playOn.Object, _logManager.Object, _queueValidator.Object);
         }
 
         [Test]
         public void BasicScanQueueWorkflow()
         {
-            var passes = new PassItems();
-            var pass = new PassItem("Test", true);
-            passes.Add(pass);
-            var scanChannelAction = new PassAction {Type = PassActionType.Scan, Name = "Random TV Network"};
-            pass.Actions.Add(scanChannelAction);
-            var scanWatchList = new PassAction { Type = PassActionType.Scan, Name = "My Things To Watch" };
-            scanChannelAction.Actions.Add(scanWatchList);
-            var queueVideos = new PassAction { Type = PassActionType.Queue, Name = "*"};
-            scanWatchList.Actions.Add(queueVideos);
+            _processor.QueueMode = true;
+            _processor.ProcessPasses(GetBasicWorkflowPass());
 
-            _processor.ProcessPasses(passes);
-
-            _playOn.Verify(p => p.GetCatalog(), Times.Exactly(1));
+            _playOn.Verify(p => p.GetCatalog());
             _playOn.Verify(p => p.GetItems("/data/data.xml?id=rtv", It.IsAny<IList<PlayOnItem>>()));
             _playOn.Verify(p => p.GetItems("/data/data.xml?id=rtv-queue", It.IsAny<IList<PlayOnItem>>()));
-            _playOn.Verify(p => p.QueueMedia(It.IsAny<PlayOnVideo>()), Times.Exactly(2));
+            _playOn.Verify(p => p.QueueMedia(It.Is<PlayOnVideo>(v => v.Url == "/data/data.xml?id=rtv-vid1")));
+            _playOn.Verify(p => p.QueueMedia(It.Is<PlayOnVideo>(v => v.Url == "/data/data.xml?id=rtv-vid2")));
             _playOn.VerifyNoOtherCalls();
         }
 
+        [Test]
+        public void PreviewMode()
+        {
+            _processor.ProcessPasses(GetBasicWorkflowPass());
+
+            _playOn.Verify(p => p.GetCatalog());
+            _playOn.Verify(p => p.GetItems(It.IsAny<string>(), It.IsAny<IList<PlayOnItem>>()), Times.Exactly(2));
+            _playOn.VerifyNoOtherCalls();
+            _queueValidator.Verify(q => q.AddMediaToCounts(It.Is<PlayOnVideo>(v => v.Url == "/data/data.xml?id=rtv-vid1")));
+            _queueValidator.Verify(q => q.AddMediaToCounts(It.Is<PlayOnVideo>(v => v.Url == "/data/data.xml?id=rtv-vid2")));
+        }
+
+        [Test]
+        public void QueueMixedFolder()
+        {
+            var scanChannelAction = new PassAction { Type = PassActionType.Scan, Name = "Random TV Network" };
+            var queueAction = new PassAction { Type = PassActionType.Queue, Name = "*" };
+            scanChannelAction.Actions.Add(queueAction);
+
+            _processor.QueueMode = true;
+            _processor.ProcessPasses(GetPasses(scanChannelAction));
+
+            _playOn.Verify(p => p.GetCatalog());
+            _playOn.Verify(p => p.GetItems("/data/data.xml?id=rtv", It.IsAny<IList<PlayOnItem>>()));
+            _playOn.Verify(p => p.QueueMedia(It.Is<PlayOnVideo>(v => v.Url == "/data/data.xml?id=rtv-clip1")));
+            _playOn.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public void SearchQueueMatches()
+        {
+            var scanChannelAction = new PassAction { Type = PassActionType.Scan, Name = "Static TV Network" };
+            var searchChannelAction = new PassAction { Type = PassActionType.Search, Name = "Video" };
+            scanChannelAction.Actions.Add(searchChannelAction);
+            var queueVideos = new PassAction { Type = PassActionType.Queue, Name = "*" };
+            searchChannelAction.Actions.Add(queueVideos);
+
+            _processor.QueueMode = true;
+            _processor.ProcessPasses(GetPasses(scanChannelAction));
+
+            _playOn.Verify(p => p.GetCatalog());
+            _playOn.Verify(p => p.GetSearchResults("/data/data.xml?id=stv", "Video"));
+            _playOn.Verify(p => p.QueueMedia(It.Is<PlayOnVideo>(v => v.Url == "/data/data.xml?id=stv-vid1")));
+            _playOn.Verify(p => p.QueueMedia(It.Is<PlayOnVideo>(v => v.Url == "/data/data.xml?id=stv-vid2")));
+            _playOn.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public void SearchNoMatch()
+        {
+            var scanChannelAction = new PassAction { Type = PassActionType.Scan, Name = "Static TV Network" };
+            var searchChannelAction = new PassAction { Type = PassActionType.Search, Name = "Nothing" };
+            scanChannelAction.Actions.Add(searchChannelAction);
+            var queueVideos = new PassAction { Type = PassActionType.Queue, Name = "*" };
+            searchChannelAction.Actions.Add(queueVideos);
+
+            _processor.QueueMode = true;
+            _processor.ProcessPasses(GetPasses(scanChannelAction));
+
+            _playOn.Verify(p => p.GetCatalog());
+            _playOn.Verify(p => p.GetSearchResults("/data/data.xml?id=stv", "Nothing"));
+            _playOn.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public void SkipDisabledPass()
+        {
+            var scanChannelAction = new PassAction { Type = PassActionType.Scan, Name = "Random TV Network" };
+            var passes = GetPasses(scanChannelAction);
+            passes[0].Enabled = false;
+
+            _processor.QueueMode = true;
+            _processor.ProcessPasses(passes);
+
+            _playOn.VerifyNoOtherCalls();
+            _queueValidator.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public void SkipExcludedPattern()
+        {
+            var scanChannelAction = new PassAction { Type = PassActionType.Scan, Name = "*", Exclude = "*Static*"};
+            var scanSubFolderAction = new PassAction { Type = PassActionType.Scan, Name = "*" };
+            scanChannelAction.Actions.Add(scanSubFolderAction);
+
+            _processor.ProcessPasses(GetPasses(scanChannelAction));
+
+            _playOn.Verify(p => p.GetCatalog());
+            _playOn.Verify(p => p.GetItems("/data/data.xml?id=rtv", It.IsAny<IList<PlayOnItem>>()));
+            _playOn.VerifyNoOtherCalls();
+            _queueValidator.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public void SkipMode()
+        {
+            _processor.SkipMode = true;
+            _processor.ProcessPasses(GetBasicWorkflowPass());
+
+            _playOn.Verify(p => p.GetCatalog());
+            _playOn.Verify(p => p.GetItems(It.IsAny<string>(), It.IsAny<IList<PlayOnItem>>()));
+            _playOn.VerifyNoOtherCalls();
+            _queueValidator.Verify(q => q.AddMediaToQueueList(It.Is<PlayOnVideo>(v => v.Url == "/data/data.xml?id=rtv-vid1")));
+            _queueValidator.Verify(q => q.AddMediaToQueueList(It.Is<PlayOnVideo>(v => v.Url == "/data/data.xml?id=rtv-vid2")));
+            _queueValidator.VerifyNoOtherCalls();
+        }
+
+        private PassItems GetBasicWorkflowPass()
+        {
+            var scanChannelAction = new PassAction { Type = PassActionType.Scan, Name = "Random TV Network" };
+            var scanWatchList = new PassAction { Type = PassActionType.Scan, Name = "My Things To Watch" };
+            scanChannelAction.Actions.Add(scanWatchList);
+            var queueVideos = new PassAction { Type = PassActionType.Queue, Name = "*" };
+            scanWatchList.Actions.Add(queueVideos);
+            return GetPasses(scanChannelAction);
+        }
+
+        private PassItems GetPasses(PassAction action = null)
+        {
+            var passes = new PassItems();
+            var pass = new PassItem("Test Pass", true);
+            passes.Add(pass);
+            if (action != null) pass.Actions.Add(action);
+            return passes;
+        }
     }
 }

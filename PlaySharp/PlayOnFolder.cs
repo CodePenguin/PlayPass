@@ -38,7 +38,7 @@ namespace PlaySharp
         /// <summary>
         ///     Indicates if the folder is searchable.
         /// </summary>
-        public bool Searchable { get; private set; }
+        public bool Searchable { get; set; }
 
         public override void LoadFromNode(XmlNode node)
         {
@@ -53,6 +53,5 @@ namespace PlaySharp
         {
             return PlayOn.GetSearchResults(this.Url, searchTerm);
         }
-
     }
 }

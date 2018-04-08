@@ -35,7 +35,6 @@ namespace PlayPass.Engine
         /// </summary>
         public void ProcessPass(PassItem pass)
         {
-            PlayOnItem currentItem = _playOn.GetCatalog();
             if (!pass.Enabled)
                 _logManager.Log("Skipping pass \"{0}\".", pass.Description);
             else
@@ -43,6 +42,7 @@ namespace PlayPass.Engine
                 _logManager.Log("Processing pass \"{0}\"...", pass.Description);
                 try
                 {
+                    PlayOnItem currentItem = _playOn.GetCatalog();
                     ProcessActions(currentItem, pass.Actions);
                 }
                 catch (Exception ex)
@@ -106,7 +106,7 @@ namespace PlayPass.Engine
                             if (!(childItem is PlayOnFolder))
                             {
                                 _logManager.LogVerbose("\"{0}\" is not a folder.", childItem.Name);
-                                return;
+                                continue;
                             }
                             using (_logManager.NextLogVerboseDepth())
                             {
@@ -120,7 +120,7 @@ namespace PlayPass.Engine
                             if (!(childItem is PlayOnVideo))
                             {
                                 _logManager.LogVerbose("\"{0}\" is not a video.", childItem.Name);
-                                return;
+                                continue;
                             }
                             _logManager.Log("Queuing \"{0}\"...", childItem.Name);
                             using (_logManager.NextLogDepth())
