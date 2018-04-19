@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayPass.Engine.Extensions"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayPass.Engine.Test", "PlayPass.Engine.Test\PlayPass.Engine.Test.csproj", "{F221DCD7-8C77-486A-9B06-D53AB9652F14}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayPass.Engine.Extensions.Test", "PlayPass.Engine.Extensions.Test\PlayPass.Engine.Extensions.Test.csproj", "{A30F05CD-5AAA-4E36-98B8-5EADCE9FA45C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{F221DCD7-8C77-486A-9B06-D53AB9652F14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F221DCD7-8C77-486A-9B06-D53AB9652F14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F221DCD7-8C77-486A-9B06-D53AB9652F14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A30F05CD-5AAA-4E36-98B8-5EADCE9FA45C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A30F05CD-5AAA-4E36-98B8-5EADCE9FA45C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A30F05CD-5AAA-4E36-98B8-5EADCE9FA45C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A30F05CD-5AAA-4E36-98B8-5EADCE9FA45C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

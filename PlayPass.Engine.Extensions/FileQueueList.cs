@@ -29,7 +29,7 @@ namespace PlayPass.Engine.Extensions
                 _skipFilePath = mediaStorageLocation;
             }
             if (!Directory.Exists(_skipFilePath))
-                throw new Exception(String.Format("Queue List data path does not exists: {0}", _skipFilePath));
+                throw new Exception(String.Format("Queue List data path does not exist: {0}", _skipFilePath));
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace PlayPass.Engine.Extensions
         public void AddMediaToList(PlayOnVideo media)
         {
             var skipFileName = SkipFileNameFromMedia(media);
-            var fs = new FileStream(skipFileName, FileMode.CreateNew);
+            var fs = new FileStream(skipFileName, FileMode.Create);
             fs.Dispose();
         }
 

@@ -33,6 +33,7 @@ namespace PlaySharp
                 LoadDetails();
                 return _artUrlLarge;
             }
+            set => _airDate = value;
         }
 
         /// <summary>
@@ -45,6 +46,7 @@ namespace PlaySharp
                 LoadDetails();
                 return _airDate;
             }
+            set => _airDate = value;
         }
 
         /// <summary>
@@ -57,6 +59,7 @@ namespace PlaySharp
                 LoadDetails();
                 return _description;
             }
+            set => _description = value;
         }
 
         /// <summary>
@@ -69,6 +72,7 @@ namespace PlaySharp
                 LoadDetails();
                 return _mediaTitle;
             }
+            set => _mediaTitle = value;
         }
 
         /// <summary>
@@ -81,6 +85,7 @@ namespace PlaySharp
                 LoadDetails();
                 return _mediaUrl;
             }
+            set => _mediaUrl = value;
         }
 
         /// <summary>
@@ -93,6 +98,7 @@ namespace PlaySharp
                 LoadDetails();
                 return _playLaterName;
             }
+            set => _playLaterName = value;
         }
 
         /// <summary>
@@ -105,6 +111,7 @@ namespace PlaySharp
                 LoadDetails();
                 return _playLaterUrl;
             }
+            set => _playLaterUrl = value;
         }
 
         /// <summary>
@@ -117,6 +124,7 @@ namespace PlaySharp
                 LoadDetails();
                 return _runTime;
             }
+            set => _runTime = value;
         }
 
         /// <summary>
@@ -129,6 +137,7 @@ namespace PlaySharp
                 LoadDetails();
                 return _series;
             }
+            set => _series = value;
         }
 
         public override void LoadFromNode(XmlNode node)
