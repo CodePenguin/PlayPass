@@ -37,9 +37,9 @@ namespace PlayPass.Engine.Extensions
         /// </summary>
         public void AddMediaToList(PlayOnVideo media)
         {
+            if (MediaInList(media)) return;
             var skipFileName = SkipFileNameFromMedia(media);
-            var fs = new FileStream(skipFileName, FileMode.Create);
-            fs.Dispose();
+            File.Create(skipFileName).Dispose();
         }
 
         /// <summary>
