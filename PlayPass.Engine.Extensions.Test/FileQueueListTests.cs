@@ -6,7 +6,7 @@ using PlaySharp;
 namespace PlayPass.Engine.Extensions.Test
 {
     [TestFixture]
-    public class FileQueueListTest
+    public class FileQueueListTests
     {
         private Mock<IPlayOn> _playOn;
         private PlayOnVideo _video1;

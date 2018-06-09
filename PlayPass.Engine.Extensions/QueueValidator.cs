@@ -39,7 +39,7 @@ namespace PlayPass.Engine.Extensions
                 message = "Already recorded or skipped.";
             else if (QueueCountLimit > 0 && QueueCountLimit <= _queuedCount)
                 message = "Queue limit reached.";
-            else if (QueueDurationLimit.Ticks > 0 && QueueDurationLimit <= _queuedDuration.Add(RunTimeToTimeSpan(media.RunTime)))
+            else if (QueueDurationLimit.Ticks > 0 && QueueDurationLimit < _queuedDuration.Add(RunTimeToTimeSpan(media.RunTime)))
                 message = "Queue duration limit reached.";
             else
             {
