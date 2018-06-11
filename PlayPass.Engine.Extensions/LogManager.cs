@@ -77,14 +77,20 @@ namespace PlayPass.Engine.Extensions
                 logger.LogVerbose(dateTime, msg);
         }
 
+        private IDisposable NextLogDepth(bool verboseMode)
+        {
+            IncrementLogDepth(verboseMode);
+            return new DisposableActionObject(() => DecrementLogDepth(verboseMode));
+        }
+
         public IDisposable NextLogDepth()
         {
-            return new DisposableActionObject(() => IncrementLogDepth(false));
+            return NextLogDepth(false);
         }
 
         public IDisposable NextLogVerboseDepth()
         {
-            return new DisposableActionObject(() => IncrementLogDepth(true));
+            return NextLogDepth(true);
         }
 
         public void XmlRequestEventHandler(object sender, XmlRequestEventArgs e)
