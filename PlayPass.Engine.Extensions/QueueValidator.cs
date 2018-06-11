@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using PlaySharp;
 
 namespace PlayPass.Engine.Extensions
@@ -14,6 +15,11 @@ namespace PlayPass.Engine.Extensions
 
         private int _queuedCount;
         private TimeSpan _queuedDuration;
+        private int _temporaryQueueCountLimit;
+        private int _temporaryQueuedCount;
+        private TimeSpan _temporaryQueueDurationLimit;
+        private TimeSpan _temporaryQueuedDuration;
+        private bool _temporaryLimitsEnabled;
 
         public QueueValidator(IQueueList queueList)
         {
@@ -22,8 +28,16 @@ namespace PlayPass.Engine.Extensions
 
         public void AddMediaToCounts(PlayOnVideo media)
         {
-            _queuedCount++;
-            _queuedDuration = _queuedDuration.Add(RunTimeToTimeSpan(media.RunTime));            
+            if (_temporaryLimitsEnabled)
+            {
+                _temporaryQueuedCount++;
+                _temporaryQueuedDuration = _queuedDuration.Add(RunTimeToTimeSpan(media.RunTime));
+            }
+            else
+            {
+                _queuedCount++;
+                _queuedDuration = _queuedDuration.Add(RunTimeToTimeSpan(media.RunTime));
+            }
         }
 
         public void AddMediaToQueueList(PlayOnVideo media)
@@ -32,14 +46,37 @@ namespace PlayPass.Engine.Extensions
             AddMediaToCounts(media);
         }
 
+        public IDisposable AddTemporaryQueueLimits(PassQueueAction action)
+        {
+            if (action.CountLimit > 0 || action.DurationLimit.Ticks > 0)
+            {
+                _temporaryQueueCountLimit = action.CountLimit;
+                _temporaryQueueDurationLimit = action.DurationLimit;
+                _temporaryLimitsEnabled = true;
+            }
+            return new DisposableActionObject(() =>
+            {
+                if (_temporaryLimitsEnabled)
+                {
+                    _queuedCount += _temporaryQueuedCount;
+                    _queuedDuration = _queuedDuration.Add(_temporaryQueuedDuration);
+                }
+                _temporaryLimitsEnabled = false;
+            });
+        }
+
         public bool CanQueueMedia(PlayOnVideo media, out string message)
         {
+            var queueCountLimit = (_temporaryLimitsEnabled ? _temporaryQueueCountLimit : QueueCountLimit);
+            var queuedCount = (_temporaryLimitsEnabled ? _temporaryQueuedCount : _queuedCount);
+            var queueDurationLimit = (_temporaryLimitsEnabled ? _temporaryQueueDurationLimit : QueueDurationLimit);
+            var queuedDuration = (_temporaryLimitsEnabled ? _temporaryQueuedDuration : _queuedDuration);
             var retValue = false;
             if (_queueList.MediaInList(media))
                 message = "Already recorded or skipped.";
-            else if (QueueCountLimit > 0 && QueueCountLimit <= _queuedCount)
+            else if (queueCountLimit > 0 && queueCountLimit <= queuedCount)
                 message = "Queue limit reached.";
-            else if (QueueDurationLimit.Ticks > 0 && QueueDurationLimit < _queuedDuration.Add(RunTimeToTimeSpan(media.RunTime)))
+            else if (queueDurationLimit.Ticks > 0 && queueDurationLimit < queuedDuration.Add(RunTimeToTimeSpan(media.RunTime)))
                 message = "Queue duration limit reached.";
             else
             {

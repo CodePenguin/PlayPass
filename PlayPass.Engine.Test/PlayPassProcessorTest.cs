@@ -52,8 +52,8 @@ namespace PlayPass.Engine.Test
         [Test]
         public void QueueMixedFolder()
         {
-            var scanChannelAction = new PassAction { Type = PassActionType.Scan, Name = "Random TV Network" };
-            var queueAction = new PassAction { Type = PassActionType.Queue, Name = "*" };
+            var scanChannelAction = new PassScanAction { Name = "Random TV Network" };
+            var queueAction = new PassQueueAction { Name = "*" };
             scanChannelAction.Actions.Add(queueAction);
 
             _processor.QueueMode = true;
@@ -68,10 +68,10 @@ namespace PlayPass.Engine.Test
         [Test]
         public void SearchQueueMatches()
         {
-            var scanChannelAction = new PassAction { Type = PassActionType.Scan, Name = "Static TV Network" };
-            var searchChannelAction = new PassAction { Type = PassActionType.Search, Name = "Video" };
+            var scanChannelAction = new PassScanAction { Name = "Static TV Network" };
+            var searchChannelAction = new PassSearchAction { Name = "Video" };
             scanChannelAction.Actions.Add(searchChannelAction);
-            var queueVideos = new PassAction { Type = PassActionType.Queue, Name = "*" };
+            var queueVideos = new PassQueueAction { Name = "*" };
             searchChannelAction.Actions.Add(queueVideos);
 
             _processor.QueueMode = true;
@@ -87,10 +87,10 @@ namespace PlayPass.Engine.Test
         [Test]
         public void SearchNoMatch()
         {
-            var scanChannelAction = new PassAction { Type = PassActionType.Scan, Name = "Static TV Network" };
-            var searchChannelAction = new PassAction { Type = PassActionType.Search, Name = "Nothing" };
+            var scanChannelAction = new PassScanAction { Name = "Static TV Network" };
+            var searchChannelAction = new PassSearchAction { Name = "Nothing" };
             scanChannelAction.Actions.Add(searchChannelAction);
-            var queueVideos = new PassAction { Type = PassActionType.Queue, Name = "*" };
+            var queueVideos = new PassQueueAction { Name = "*" };
             searchChannelAction.Actions.Add(queueVideos);
 
             _processor.QueueMode = true;
@@ -104,7 +104,7 @@ namespace PlayPass.Engine.Test
         [Test]
         public void SkipDisabledPass()
         {
-            var scanChannelAction = new PassAction { Type = PassActionType.Scan, Name = "Random TV Network" };
+            var scanChannelAction = new PassScanAction { Name = "Random TV Network" };
             var passes = GetPasses(scanChannelAction);
             passes[0].Enabled = false;
 
@@ -118,8 +118,8 @@ namespace PlayPass.Engine.Test
         [Test]
         public void SkipExcludedPattern()
         {
-            var scanChannelAction = new PassAction { Type = PassActionType.Scan, Name = "*", Exclude = "*Static*"};
-            var scanSubFolderAction = new PassAction { Type = PassActionType.Scan, Name = "*" };
+            var scanChannelAction = new PassScanAction { Name = "*", Exclude = "*Static*"};
+            var scanSubFolderAction = new PassScanAction { Name = "*" };
             scanChannelAction.Actions.Add(scanSubFolderAction);
 
             _processor.ProcessPasses(GetPasses(scanChannelAction));
@@ -141,15 +141,16 @@ namespace PlayPass.Engine.Test
             _playOn.VerifyNoOtherCalls();
             _queueValidator.Verify(q => q.AddMediaToQueueList(It.Is<PlayOnVideo>(v => v.Url == "/data/data.xml?id=rtv-vid1")));
             _queueValidator.Verify(q => q.AddMediaToQueueList(It.Is<PlayOnVideo>(v => v.Url == "/data/data.xml?id=rtv-vid2")));
+            _queueValidator.Verify(q => q.AddTemporaryQueueLimits(It.IsAny<PassQueueAction>()));
             _queueValidator.VerifyNoOtherCalls();
         }
 
         private PassItems GetBasicWorkflowPass()
         {
-            var scanChannelAction = new PassAction { Type = PassActionType.Scan, Name = "Random TV Network" };
-            var scanWatchList = new PassAction { Type = PassActionType.Scan, Name = "My Things To Watch" };
+            var scanChannelAction = new PassScanAction { Name = "Random TV Network" };
+            var scanWatchList = new PassScanAction { Name = "My Things To Watch" };
             scanChannelAction.Actions.Add(scanWatchList);
-            var queueVideos = new PassAction { Type = PassActionType.Queue, Name = "*" };
+            var queueVideos = new PassQueueAction { Name = "*" };
             scanWatchList.Actions.Add(queueVideos);
             return GetPasses(scanChannelAction);
         }

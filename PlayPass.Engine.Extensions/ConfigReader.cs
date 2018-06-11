@@ -17,6 +17,17 @@ namespace PlayPass.Engine.Extensions
             _config.Load(fileName);
         }
 
+        private static PassAction CreatePassActionInstance(PassActionType actionType)
+        {
+            switch (actionType)
+            {
+                case PassActionType.Queue: return new PassQueueAction(); ;
+                case PassActionType.Scan: return new PassScanAction();
+                case PassActionType.Search: return new PassSearchAction();
+                default: throw new Exception($"Unhandled PassActionType {actionType}");
+            }
+        }
+
         public void GetLoggers(ICollection<ILogger> loggers)
         {
             var loggersNode = _config.SelectSingleNode("playpass/settings/loggers");
@@ -61,12 +72,9 @@ namespace PlayPass.Engine.Extensions
         {
             foreach (XmlNode actionNode in parentNode.ChildNodes)
             {
-                var action = new PassAction
-                {
-                    Name = Util.GetNodeAttributeValue(actionNode, "name"),
-                    Type = StringToPassActionType(actionNode.Name),
-                    Exclude = Util.GetNodeAttributeValue(actionNode, "exclude")
-                };
+                var actionType = StringToPassActionType(actionNode.Name);
+                var action = CreatePassActionInstance(actionType);
+                LoadPassActionFromXmlNode(action, actionNode);
                 if (PassItemTypeHasActions(action.Type))
                     GetPassActions(action.Actions, actionNode);
                 list.Add(action);
@@ -89,6 +97,17 @@ namespace PlayPass.Engine.Extensions
             return new QueueValidator(queueList) { QueueDurationLimit = queueDurationLimit, QueueCountLimit = queueCountLimit };
         }
 
+        private static void LoadPassActionFromXmlNode(PassAction action, XmlNode actionNode)
+        {
+            action.Name = Util.GetNodeAttributeValue(actionNode, "name");
+            action.Exclude = Util.GetNodeAttributeValue(actionNode, "exclude");
+            if (action is PassQueueAction queueAction)
+            {
+                queueAction.CountLimit = int.Parse(Util.GetNodeAttributeValue(actionNode, "limit_count", "0"));
+                queueAction.DurationLimit = TimeSpan.Parse(Util.GetNodeAttributeValue(actionNode, "limit_duration", "00:00:00"));
+            }
+        }
+
         private static bool PassItemTypeHasActions(PassActionType actionType)
         {
             return (actionType == PassActionType.Scan || actionType == PassActionType.Search);
@@ -105,7 +124,7 @@ namespace PlayPass.Engine.Extensions
                 case "search":
                     return PassActionType.Search;
                 default:
-                    throw new Exception(String.Format("Invalid PassActionType string: {0}", type));
+                    throw new Exception($"Invalid PassActionType string: {type}");
             }
         }
     }

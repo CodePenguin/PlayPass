@@ -73,6 +73,7 @@ namespace PlayPass.Engine.Test
             queueValidator.Setup(v => v.AddMediaToQueueList(It.IsAny<PlayOnVideo>()));
             queueValidator.Setup(v => v.AddMediaToCounts(It.IsAny<PlayOnVideo>()));
             queueValidator.Setup(v => v.CanQueueMedia(It.IsAny<PlayOnVideo>(), out message)).Returns(true);
+            queueValidator.Setup(v => v.AddTemporaryQueueLimits(It.IsAny<PassQueueAction>()));
             return queueValidator;
         }
     }

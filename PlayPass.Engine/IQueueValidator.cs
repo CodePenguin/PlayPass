@@ -1,4 +1,5 @@
-﻿using PlaySharp;
+﻿using System;
+using PlaySharp;
 
 namespace PlayPass.Engine
 {
@@ -9,6 +10,7 @@ namespace PlayPass.Engine
     {
         void AddMediaToCounts(PlayOnVideo media);
         void AddMediaToQueueList(PlayOnVideo media);
+        IDisposable AddTemporaryQueueLimits(PassQueueAction action);
         bool CanQueueMedia(PlayOnVideo media, out string message);
     }
 }

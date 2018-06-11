@@ -79,30 +79,12 @@ namespace PlayPass.Engine.Extensions
 
         public IDisposable NextLogDepth()
         {
-            return new LogDepthPointer(this, false);
+            return new DisposableActionObject(() => IncrementLogDepth(false));
         }
 
         public IDisposable NextLogVerboseDepth()
         {
-            return new LogDepthPointer(this, true);
-        }
-
-        private class LogDepthPointer : IDisposable
-        {
-            private readonly LogManager _logManager;
-            private readonly bool _verboseMode;
-
-            public LogDepthPointer(LogManager logManager, bool verboseMode)
-            {
-                _verboseMode = verboseMode;
-                _logManager = logManager;
-                _logManager.IncrementLogDepth(_verboseMode);
-            }
-
-            public void Dispose()
-            {
-                _logManager.DecrementLogDepth(_verboseMode);
-            }
+            return new DisposableActionObject(() => IncrementLogDepth(true));
         }
 
         public void XmlRequestEventHandler(object sender, XmlRequestEventArgs e)

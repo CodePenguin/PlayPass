@@ -70,6 +70,11 @@ namespace PlayPass.Engine
                             ProcessSearchAction(folder, action);
                             break;
                         case PassActionType.Queue:
+                            using (_queueValidator.AddTemporaryQueueLimits(action as PassQueueAction))
+                            {
+                                ProcessMatchAction(folder, action);
+                            }
+                            break;
                         case PassActionType.Scan:
                             ProcessMatchAction(folder, action);
                             break;
@@ -124,7 +129,9 @@ namespace PlayPass.Engine
                             }
                             _logManager.Log("Queuing \"{0}\"...", childItem.Name);
                             using (_logManager.NextLogDepth())
+                            {
                                 QueueMedia((PlayOnVideo) childItem);
+                            }
                             break;
                     }
                 }

@@ -40,8 +40,12 @@
     <Compile Include="IQueueValidator.cs" />
     <Compile Include="PassAction.cs" />
     <Compile Include="PassItem.cs" />
+    <Compile Include="PassSearchAction.cs" />
+    <Compile Include="PassScanAction.cs" />
+    <Compile Include="PassQueueAction.cs" />
     <Compile Include="PlayPassProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DisposableActionObject.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PlaySharp\PlaySharp.csproj">
