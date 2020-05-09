@@ -16,6 +16,7 @@ namespace PlayPass.Engine
 
         public string Name { get; set; }
         public string Exclude { get; set; }
+        public bool Reverse { get; set; }
         public PassActionType Type { get; protected set; }
         public PassActions Actions { get; }
     }

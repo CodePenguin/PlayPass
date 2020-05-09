@@ -101,6 +101,7 @@ namespace PlayPass.Engine.Extensions
         {
             action.Name = Util.GetNodeAttributeValue(actionNode, "name");
             action.Exclude = Util.GetNodeAttributeValue(actionNode, "exclude");
+            action.Reverse = Util.GetNodeAttributeBooleanValue(actionNode, "reverse");
             if (action is PassQueueAction queueAction)
             {
                 queueAction.CountLimit = int.Parse(Util.GetNodeAttributeValue(actionNode, "limit_count", "0"));

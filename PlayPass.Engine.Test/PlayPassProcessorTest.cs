@@ -65,6 +65,68 @@ namespace PlayPass.Engine.Test
             _playOn.VerifyNoOtherCalls();
         }
 
+        [TestCase(false)]
+        [TestCase(true)]
+        public void QueueReverse(bool reverseValue)
+        {
+            // Track the queue order
+            var urls = new List<string>();
+            _playOn.Setup(p => p.QueueMedia(It.IsAny<PlayOnVideo>()))
+                .Returns<PlayOnVideo>((video) =>
+                {
+                    urls.Add(video.Url);
+                    return PlayOnConstants.QueueVideoResult.Success;
+                });
+
+            var scanChannelAction = new PassScanAction { Name = "Random TV Network" };
+            var scanWatchList = new PassScanAction { Name = "My Things To Watch" };
+            scanChannelAction.Actions.Add(scanWatchList);
+            var queueVideos = new PassQueueAction { Name = "*", Reverse = reverseValue };
+            scanWatchList.Actions.Add(queueVideos);
+
+            _processor.QueueMode = true;
+            _processor.ProcessPasses(GetPasses(scanChannelAction));
+
+            _playOn.Verify(p => p.GetCatalog());
+            _playOn.Verify(p => p.GetItems("/data/data.xml?id=rtv", It.IsAny<IList<PlayOnItem>>()));
+            _playOn.Verify(p => p.GetItems("/data/data.xml?id=rtv-queue", It.IsAny<IList<PlayOnItem>>()));
+            _playOn.Verify(p => p.QueueMedia(It.Is<PlayOnVideo>(v => v.Url == "/data/data.xml?id=rtv-vid1")));
+            _playOn.Verify(p => p.QueueMedia(It.Is<PlayOnVideo>(v => v.Url == "/data/data.xml?id=rtv-vid2")));
+            _playOn.VerifyNoOtherCalls();
+
+            // Verify the queue order
+            Assert.AreEqual(2, urls.Count);
+            Assert.AreEqual((!reverseValue ? 0 : 1), urls.IndexOf("/data/data.xml?id=rtv-vid1"));
+            Assert.AreEqual((!reverseValue ? 1 : 0), urls.IndexOf("/data/data.xml?id=rtv-vid2"));
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void ScanReverse(bool reverseValue)
+        {
+            // Track the scan order
+            var urls = new List<string>();
+            _playOn.Setup(p => p.GetItems(It.IsAny<string>(), It.IsAny<IList<PlayOnItem>>()))
+                .Callback<string, IList<PlayOnItem>>((url, list) => urls.Add(url));
+
+            var scanChannelAction = new PassScanAction { Name = "*", Reverse = reverseValue };
+            var queueVideos = new PassQueueAction { Name = "*" };
+            scanChannelAction.Actions.Add(queueVideos);
+
+            _processor.QueueMode = true;
+            _processor.ProcessPasses(GetPasses(scanChannelAction));
+
+            _playOn.Verify(p => p.GetCatalog());
+            _playOn.Verify(p => p.GetItems("/data/data.xml?id=stv", It.IsAny<IList<PlayOnItem>>()));
+            _playOn.Verify(p => p.GetItems("/data/data.xml?id=rtv", It.IsAny<IList<PlayOnItem>>()));
+            _playOn.VerifyNoOtherCalls();
+
+            // Verify the scan order
+            Assert.AreEqual(2, urls.Count);
+            Assert.AreEqual((!reverseValue ? 0 : 1), urls.IndexOf("/data/data.xml?id=rtv"));
+            Assert.AreEqual((!reverseValue ? 1 : 0), urls.IndexOf("/data/data.xml?id=stv"));
+        }
+
         [Test]
         public void SearchQueueMatches()
         {

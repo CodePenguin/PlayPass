@@ -19,6 +19,16 @@ namespace PlaySharp
         }
 
         /// <summary>
+        ///     Gets the attribute value of a node as a boolean or returns DefaultValue if it doesn't exist.
+        /// </summary>
+        public static bool GetNodeAttributeBooleanValue(XmlNode node, string attributeName, bool defaultValue = false)
+        {
+            var value = GetNodeAttributeValue(node, attributeName);
+            if (string.IsNullOrEmpty(value)) return defaultValue;
+            return XmlConvert.ToBoolean(value);
+        }
+
+        /// <summary>
         ///     Gets the InnerText of a node as a string or returns DefaultValue if it doesn't exist.
         /// </summary>
         public static string GetNodeInnerText(XmlNode node, string defaultValue = "")

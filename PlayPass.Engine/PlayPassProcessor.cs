@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using PlaySharp;
 
 namespace PlayPass.Engine
@@ -94,7 +95,12 @@ namespace PlayPass.Engine
             _logManager.Log("Matching \"{0}\"...", matchPattern);
             using (_logManager.NextLogDepth())
             {
-                foreach (var childItem in folder.Items)
+                var folderItems = new List<PlayOnItem>(folder.Items);
+                if (action.Reverse)
+                {
+                    folderItems.Reverse();
+                }
+                foreach (var childItem in folderItems)
                 {
                     _logManager.LogVerbose("Checking \"{0}\"...", childItem.Name);
                     if (!Util.MatchesPattern(childItem.Name, matchPattern))
