@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9DB94706-9212-4CBE-BD26-70FBB8E8B7CB}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>PlayPass.Metrics</RootNamespace>
+    <AssemblyName>PlayPass.Metrics</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <DependsOnNETStandard>true</DependsOnNETStandard>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="metrics.bat" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CodeCoverageRunner.cs" />
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PlayPass.Engine.Extensions.Test\PlayPass.Engine.Extensions.Test.csproj">
+      <Project>{a30f05cd-5aaa-4e36-98b8-5eadce9fa45c}</Project>
+      <Name>PlayPass.Engine.Extensions.Test</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PlayPass.Engine.Test\PlayPass.Engine.Test.csproj">
+      <Project>{f221dcd7-8c77-486a-9b06-d53ab9652f14}</Project>
+      <Name>PlayPass.Engine.Test</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NUnit.ConsoleRunner">
+      <Version>3.11.1</Version>
+    </PackageReference>
+    <PackageReference Include="OpenCover">
+      <Version>4.7.922</Version>
+    </PackageReference>
+    <PackageReference Include="ReportGenerator">
+      <Version>4.5.8</Version>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

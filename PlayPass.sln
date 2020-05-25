@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2015
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlaySharp", "PlaySharp\PlaySharp.csproj", "{4CAE46FF-C6ED-46FC-A8ED-EE4984CE2FE6}"
 EndProject
@@ -14,6 +14,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayPass.Engine.Test", "PlayPass.Engine.Test\PlayPass.Engine.Test.csproj", "{F221DCD7-8C77-486A-9B06-D53AB9652F14}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayPass.Engine.Extensions.Test", "PlayPass.Engine.Extensions.Test\PlayPass.Engine.Extensions.Test.csproj", "{A30F05CD-5AAA-4E36-98B8-5EADCE9FA45C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayPass.Metrics", "PlayPass.Metrics\PlayPass.Metrics.csproj", "{9DB94706-9212-4CBE-BD26-70FBB8E8B7CB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A30F05CD-5AAA-4E36-98B8-5EADCE9FA45C} = {A30F05CD-5AAA-4E36-98B8-5EADCE9FA45C}
+		{F221DCD7-8C77-486A-9B06-D53AB9652F14} = {F221DCD7-8C77-486A-9B06-D53AB9652F14}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +51,10 @@ Global
 		{A30F05CD-5AAA-4E36-98B8-5EADCE9FA45C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A30F05CD-5AAA-4E36-98B8-5EADCE9FA45C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A30F05CD-5AAA-4E36-98B8-5EADCE9FA45C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DB94706-9212-4CBE-BD26-70FBB8E8B7CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DB94706-9212-4CBE-BD26-70FBB8E8B7CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DB94706-9212-4CBE-BD26-70FBB8E8B7CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DB94706-9212-4CBE-BD26-70FBB8E8B7CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

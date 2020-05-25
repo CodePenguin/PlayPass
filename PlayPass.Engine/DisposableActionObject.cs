@@ -5,7 +5,7 @@ namespace PlayPass.Engine
     public class DisposableActionObject : IDisposable
     {
         public delegate void DisposeAction();
-        private readonly DisposeAction _disposeAction;
+        private DisposeAction _disposeAction;
 
         public DisposableActionObject(DisposeAction disposeAction)
         {
@@ -14,7 +14,15 @@ namespace PlayPass.Engine
 
         public void Dispose()
         {
-            _disposeAction();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposeAction == null) return;
+            if (disposing) _disposeAction();
+            _disposeAction = null;
         }
     }
 }
