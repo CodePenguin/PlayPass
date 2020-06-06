@@ -50,6 +50,74 @@ namespace PlayPass.Engine.Test
         }
 
         [Test]
+        public void ProcessPassEncounteredException()
+        {
+            _playOn.Setup(p => p.GetCatalog()).Throws(new System.Exception("Simulated Error"));
+
+            var scanChannelAction = new PassScanAction { Name = "Random TV Network" };
+            var queueAction = new PassQueueAction { Name = "*" };
+            scanChannelAction.Actions.Add(queueAction);
+
+            _processor.QueueMode = true;
+            _processor.ProcessPasses(GetPasses(scanChannelAction));
+
+            _playOn.Verify(p => p.GetCatalog());
+            _playOn.VerifyNoOtherCalls();
+
+            _logManager.Verify(m => m.LogException(It.Is<System.Exception>(e => e.Message.Contains("Simulated Error"))));
+        }
+
+        [Test]
+        public void QueueAlreadyQueued()
+        {
+            _playOn.Setup(p => p.QueueMedia(It.IsAny<PlayOnVideo>())).Returns(PlayOnConstants.QueueVideoResult.AlreadyInQueue);
+
+            var scanChannelAction = new PassScanAction { Name = "Random TV Network" };
+            var queueAction = new PassQueueAction { Name = "*" };
+            scanChannelAction.Actions.Add(queueAction);
+
+            _processor.QueueMode = true;
+            _processor.ProcessPasses(GetPasses(scanChannelAction));
+
+            _playOn.Verify(p => p.GetCatalog());
+            _playOn.Verify(p => p.GetItems("/data/data.xml?id=rtv", It.IsAny<IList<PlayOnItem>>()));
+            _playOn.Verify(p => p.QueueMedia(It.Is<PlayOnVideo>(v => v.Url == "/data/data.xml?id=rtv-clip1")));
+            _playOn.VerifyNoOtherCalls();
+
+            string msg;
+            _queueValidator.Verify(q => q.AddTemporaryQueueLimits(It.IsAny<PassQueueAction>()));
+            _queueValidator.Verify(q => q.CanQueueMedia(It.IsAny<PlayOnVideo>(), out msg));
+            _queueValidator.VerifyNoOtherCalls();
+
+            _logManager.Verify(m => m.Log(It.IsAny<string>(), It.Is<object[]>(v => v.Length == 2 && v[1].ToString().Contains("Already queued"))));
+        }
+
+        [Test]
+        public void QueueLinkNotFound()
+        {
+            _playOn.Setup(p => p.QueueMedia(It.IsAny<PlayOnVideo>())).Returns(PlayOnConstants.QueueVideoResult.PlayLaterNotFound);
+
+            var scanChannelAction = new PassScanAction { Name = "Random TV Network" };
+            var queueAction = new PassQueueAction { Name = "*" };
+            scanChannelAction.Actions.Add(queueAction);
+
+            _processor.QueueMode = true;
+            _processor.ProcessPasses(GetPasses(scanChannelAction));
+
+            _playOn.Verify(p => p.GetCatalog());
+            _playOn.Verify(p => p.GetItems("/data/data.xml?id=rtv", It.IsAny<IList<PlayOnItem>>()));
+            _playOn.Verify(p => p.QueueMedia(It.Is<PlayOnVideo>(v => v.Url == "/data/data.xml?id=rtv-clip1")));
+            _playOn.VerifyNoOtherCalls();
+
+            string msg;
+            _queueValidator.Verify(q => q.AddTemporaryQueueLimits(It.IsAny<PassQueueAction>()));
+            _queueValidator.Verify(q => q.CanQueueMedia(It.IsAny<PlayOnVideo>(), out msg));
+            _queueValidator.VerifyNoOtherCalls();
+
+            _logManager.Verify(m => m.Log(It.IsAny<string>(), It.Is<object[]>(v => v.Length == 2 && v[0].ToString() == "Skipped" && v[1].ToString().Contains("queue link not found"))));
+        }
+
+        [Test]
         public void QueueMixedFolder()
         {
             var scanChannelAction = new PassScanAction { Name = "Random TV Network" };
@@ -98,6 +166,31 @@ namespace PlayPass.Engine.Test
             Assert.AreEqual(2, urls.Count);
             Assert.AreEqual((!reverseValue ? 0 : 1), urls.IndexOf("/data/data.xml?id=rtv-vid1"));
             Assert.AreEqual((!reverseValue ? 1 : 0), urls.IndexOf("/data/data.xml?id=rtv-vid2"));
+        }
+
+        [Test]
+        public void QueueThrewError()
+        {
+            _playOn.Setup(p => p.QueueMedia(It.IsAny<PlayOnVideo>())).Throws(new System.Exception("Simulated Error"));
+
+            var scanChannelAction = new PassScanAction { Name = "Random TV Network" };
+            var queueAction = new PassQueueAction { Name = "*" };
+            scanChannelAction.Actions.Add(queueAction);
+
+            _processor.QueueMode = true;
+            _processor.ProcessPasses(GetPasses(scanChannelAction));
+
+            _playOn.Verify(p => p.GetCatalog());
+            _playOn.Verify(p => p.GetItems("/data/data.xml?id=rtv", It.IsAny<IList<PlayOnItem>>()));
+            _playOn.Verify(p => p.QueueMedia(It.Is<PlayOnVideo>(v => v.Url == "/data/data.xml?id=rtv-clip1")));
+            _playOn.VerifyNoOtherCalls();
+
+            string msg;
+            _queueValidator.Verify(q => q.AddTemporaryQueueLimits(It.IsAny<PassQueueAction>()));
+            _queueValidator.Verify(q => q.CanQueueMedia(It.IsAny<PlayOnVideo>(), out msg));
+            _queueValidator.VerifyNoOtherCalls();
+
+            _logManager.Verify(m => m.Log(It.IsAny<string>(), It.Is<object[]>(v => v.Length == 2 && v[0].ToString() == "Skipped" && v[1].ToString().Contains("Simulated Error"))));
         }
 
         [TestCase(false)]
@@ -161,6 +254,24 @@ namespace PlayPass.Engine.Test
             _playOn.Verify(p => p.GetCatalog());
             _playOn.Verify(p => p.GetSearchResults("/data/data.xml?id=stv", "Nothing"));
             _playOn.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public void SearchNotSearchable()
+        {
+            var scanChannelAction = new PassScanAction { Name = "Random TV Network" };
+            var searchChannelAction = new PassSearchAction { Name = "Nothing" };
+            scanChannelAction.Actions.Add(searchChannelAction);
+            var queueVideos = new PassQueueAction { Name = "*" };
+            searchChannelAction.Actions.Add(queueVideos);
+
+            _processor.QueueMode = true;
+            _processor.ProcessPasses(GetPasses(scanChannelAction));
+
+            _playOn.Verify(p => p.GetCatalog());
+            _playOn.VerifyNoOtherCalls();
+
+            _logManager.Verify(m => m.Log(It.Is<string>(s => s.Contains("not searchable")), It.IsAny<object[]>()));
         }
 
         [Test]

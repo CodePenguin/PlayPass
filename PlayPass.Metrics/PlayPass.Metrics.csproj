@@ -37,7 +37,6 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="metrics.bat" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeCoverageRunner.cs" />
